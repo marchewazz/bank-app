@@ -1,0 +1,70 @@
+WindowManager:
+    RegisterScreen:
+    LoginScreen:
+    MainScreen:
+
+<RegisterScreen>:
+    name: "RegisterScreen"
+
+    GridLayout:
+        rows: 5
+
+        TextInput:
+            id: accEmail
+            hint_text: "Pass your email"
+        TextInput:
+            id: accFirstName
+            hint_text: "Pass your name"
+        TextInput:
+            id: accLastName
+            hint_text: "Pass your lastname"
+        TextInput:
+            password: True
+            id: accPassword
+            hint_text: "Pass your password"
+        GridLayout:
+            cols: 2
+            Button:
+                text: "Register"
+                on_release:
+                    root.register()
+            Button:
+                text: "I have an account. Login"
+                on_release:
+                    root.manager.transition.direction = "left"
+                    app.root.current = "LoginScreen"
+
+<LoginScreen>:
+    name: "LoginScreen"
+
+    GridLayout:
+        rows: 2
+
+        GridLayout:
+            rows: 2
+            TextInput:
+                id: accEmail
+                hint_text: "Pass email"
+            TextInput:
+                password: True
+                id: accPassword
+                hint_text: "Pass email"
+
+        GridLayout:
+            cols: 2
+            Button:
+                text: "Login"
+                on_release:
+                    root.login()
+            Button:
+                text: "I don't have an account. Register"
+                on_release:
+                    root.manager.transition.direction = "right"
+                    app.root.current = "RegisterScreen"
+
+<MainScreen>:
+    name: "MainScreen"
+
+    BoxLayout:
+        Label:
+            text: "Logged"
