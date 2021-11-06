@@ -27,8 +27,13 @@ def register(request):
             if  not list(accountsWithPassedEmail):
                 try:
                     now = datetime.datetime.now()
+                    while True:
+                        #I NEED TO MAKE SURE ACCOUNT NUMBER IS UNIQUE
+                        randomAccNumber = str(randint(100000000000,999999999999))
+                        if len(list(collection.find({"accountNumber": randomAccNumber}))) == 0: break
+
                     collection.insert_one({
-                        "accountNumber": str(randint(100000000000,999999999999)),
+                        "accountNumber": randomAccNumber,
                         "accountEmail": account['accountEmail'],
                         "accountUser": account['accountName'],
                         "accountCreateDate": now,
@@ -36,7 +41,6 @@ def register(request):
                         "accountPass": hasher.hash(account['accountPass']),
                         "bills": []
                     })
-
                 except ConnectionError:
                     client.close()
                     return HttpResponse("Query problem!")
