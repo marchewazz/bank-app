@@ -7,7 +7,7 @@ WindowManager:
     name: "RegisterScreen"
 
     GridLayout:
-        rows: 5
+        rows: 6
 
         TextInput:
             id: accEmail
@@ -23,9 +23,16 @@ WindowManager:
             id: accPassword
             hint_text: "Pass your password"
         GridLayout:
+            id: informationGrid
+            cols: 1
+            Label:
+                id: information
+        GridLayout:
             cols: 2
             Button:
                 text: "Register"
+                on_press:
+                    root.loadingLabel()
                 on_release:
                     root.register()
             Button:
@@ -41,7 +48,7 @@ WindowManager:
         rows: 2
 
         GridLayout:
-            rows: 2
+            rows: 3
             TextInput:
                 id: accEmail
                 hint_text: "Pass email"
@@ -49,11 +56,14 @@ WindowManager:
                 password: True
                 id: accPassword
                 hint_text: "Pass email"
-
+            Label:
+                id: information
         GridLayout:
             cols: 2
             Button:
                 text: "Login"
+                on_press:
+                    root.loadingLabel()
                 on_release:
                     root.login()
             Button:

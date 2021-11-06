@@ -10,7 +10,12 @@ import re
 
 
 class RegisterScreen(Screen):
+    def loadingLabel(self):
+        #IT'S EVEN WEIRDER BUT I NEED THIS FUNCTION IN THIS SCOPE TO KV LANG
+        self.ids.information.text = "Loading..."
     def register(self):
+        def settingLabel(info):
+            self.ids.information.text = info
         accountName = {
             "firstName": self.ids.accFirstName.text,
             "lastName": self.ids.accLastName.text,
@@ -19,62 +24,59 @@ class RegisterScreen(Screen):
         accountPass = self.ids.accPassword.text
         if accountName and accountEmail and accountPass:
             if not (re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', accountEmail)):
-                print("Invalid email!")
+                settingLabel("Invalid email!")
             elif re.search(r'\d', accountName["firstName"]) or re.search(r'\d', accountName["lastName"]):
-                print("How is it to have digit in name?")
+                settingLabel("How is it to have digit in name?")
             elif len(accountPass) < 8:
-                print("Too short password!")
+                settingLabel("Too short password!")
             elif len(accountPass) > 25:
-                print("Too long password!")
+                settingLabel("Too long password!")
             else:
-                print("Requested")
-                response = requests.post(
-                    'http://127.0.0.1:8000/accounts/register',
-                    data=json.dumps({'accountName': accountName,
-                                     'accountEmail': accountEmail,
-                                     'accountPass': accountPass,
-                                     }))
-                print(response.text)
-                if response.text == "Added!":
-                    content = Button(text='You\'ve been registered')
-                    popup = Popup(title='Success!',
-                                  content=content)
-                    content.bind(on_press=popup.dismiss)
-
-                    def changeScreen(instance):
-                        self.manager.current = 'LoginScreen'
-
-                    popup.bind(on_dismiss=changeScreen)
-                    popup.open()
+                try:
+                    response = requests.post(
+                        'http://127.0.0.1:8000/accounts/register',
+                        data=json.dumps({'accountName': accountName,
+                                         'accountEmail': accountEmail,
+                                         'accountPass': accountPass,
+                                         }))
+                except:
+                    settingLabel("Server issue!")
+                else:
+                    settingLabel(response.text)
 
         else:
-            print("Missing data!")
+            settingLabel("Missing data!")
 
 
 class LoginScreen(Screen):
+    def loadingLabel(self):
+        #IT'S EVEN WEIRDER BUT I NEED THIS FUNCTION IN THIS SCOPE TO KV LANG
+        self.ids.information.text = "Loading..."
     def login(self):
-        print("loggin")
+        def settingLabel(info):
+            self.ids.information.text = info
         accountEmail = self.ids.accEmail.text
         accountPass = self.ids.accPassword.text
         if accountEmail and accountPass:
             if not (re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', accountEmail)):
-                print("Invalid email!")
+                settingLabel("Invalid email!")
             elif len(accountPass) < 8:
-                print("Too short password!")
+                settingLabel("Too short password!")
             elif len(accountPass) > 25:
-                print("Too long password!")
+                settingLabel("Too long password!")
             else:
-                r = requests.get('http://127.0.0.1:8000/accounts/login', data=json.dumps({
-                    "accountEmail": accountEmail,
-                    "accountPassword": accountPass}))
-                response = r.text
-                if response == "logged":
-                    self.manager.current = 'MainScreen'
-                if response == "no matching email":
-                    self.manager.current = 'RegisterScreen'
+                try:
+                    r = requests.get('http://127.0.0.1:8000/accounts/login', data=json.dumps({
+                        "accountEmail": accountEmail,
+                        "accountPassword": accountPass}))
+                    response = r.text
+                except:
+                    settingLabel("Server issue!")
+                else:
+                    settingLabel(r.text)
 
         else:
-            print("Missing data")
+            settingLabel("Missing data")
 
 
 class MainScreen(Screen):
