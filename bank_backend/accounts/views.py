@@ -13,7 +13,7 @@ def register(request):
     try:
         client = MongoClient(mongoUrl)
     except ConnectionError:
-        return HttpResponse("Database problem")
+        return HttpResponse("Database problem!")
     else:
         db = client['bank']
         collection = db['accounts']
@@ -39,20 +39,20 @@ def register(request):
 
                 except ConnectionError:
                     client.close()
-                    return HttpResponse("Query problem")
+                    return HttpResponse("Query problem!")
                 else:
                     client.close()
                     return HttpResponse("Added!")
             else:
                 client.close()
-                return HttpResponse("We've got already account")
+                return HttpResponse("We've got already account!")
 def login(request):
     account = json.loads(request.body)
     print(account)
     try:
         client = MongoClient(mongoUrl)
     except ConnectionError:
-        return HttpResponse("Database problem")
+        return HttpResponse("Database problem!")
     else:
         try:
             db = client['bank']
@@ -62,18 +62,18 @@ def login(request):
 
         except ConnectionError:
             client.close()
-            return HttpResponse("Database problem")
+            return HttpResponse("Database problem!")
         else:
             accountsWithPassedEmail = list(accountsWithPassedEmail)
             if not accountsWithPassedEmail:
                 client.close()
-                return HttpResponse("no matching email")
+                return HttpResponse("No matching email!")
             else:
                 password = accountsWithPassedEmail[0]['accountPass']
 
                 if hasher.verify(account['accountPassword'], password):
                     client.close()
-                    return HttpResponse("logged")
+                    return HttpResponse("Logged!")
                 else:
                     client.close()
-                    return HttpResponse("wrong password")
+                    return HttpResponse("Wrong password!")
