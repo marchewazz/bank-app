@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from passlib.hash import django_pbkdf2_sha256 as hasher
 
 from pymongo import MongoClient
@@ -7,13 +7,16 @@ from random import randint
 import json
 import datetime
 from secret import mongoUrl
+from bson.json_util import dumps
+
+
 
 @csrf_exempt
 def register(request):
     try:
         client = MongoClient(mongoUrl)
     except ConnectionError:
-        return HttpResponse("Database problem!")
+        return JsonResponse({"message": "Database problem!"})
     else:
         db = client['bank']
         collection = db['accounts']
@@ -22,7 +25,7 @@ def register(request):
             accountsWithPassedEmail = collection.find({"accountEmail": account['accountEmail']})
         except ConnectionError:
             client.close()
-            return HttpResponse("Database problem")
+            return JsonResponse({"message": "Database problem"})
         else:
             if  not list(accountsWithPassedEmail):
                 try:
@@ -43,20 +46,22 @@ def register(request):
                     })
                 except ConnectionError:
                     client.close()
-                    return HttpResponse("Query problem!")
+                    return JsonResponse({"message": "Query problem!"})
                 else:
                     client.close()
-                    return HttpResponse("Added!")
+                    return JsonResponse({"message": "Added!"})
             else:
                 client.close()
-                return HttpResponse("We've got already account!")
+                return JsonResponse({"message": "We've got already account!"})
+
+
 def login(request):
     account = json.loads(request.body)
     print(account)
     try:
         client = MongoClient(mongoUrl)
     except ConnectionError:
-        return HttpResponse("Database problem!")
+        return JsonResponse({"message": "Database problem!"})
     else:
         try:
             db = client['bank']
@@ -66,18 +71,18 @@ def login(request):
 
         except ConnectionError:
             client.close()
-            return HttpResponse("Database problem!")
+            return JsonResponse({"message": "Database problem!"})
         else:
             accountsWithPassedEmail = list(accountsWithPassedEmail)
             if not accountsWithPassedEmail:
                 client.close()
-                return HttpResponse("No matching email!")
+                return JsonResponse({"message": "No matching email!"})
             else:
                 password = accountsWithPassedEmail[0]['accountPass']
 
                 if hasher.verify(account['accountPassword'], password):
                     client.close()
-                    return HttpResponse("Logged!")
+                    return JsonResponse({"message": "Logged!", "user": dumps(accountsWithPassedEmail, indent=2)})
                 else:
                     client.close()
-                    return HttpResponse("Wrong password!")
+                    return JsonResponse({"message": "Wrong password!"})

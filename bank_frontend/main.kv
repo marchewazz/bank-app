@@ -1,4 +1,7 @@
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
 WindowManager:
+    transition: FadeTransition()
     RegisterScreen:
     LoginScreen:
     MainScreen:
@@ -8,7 +11,6 @@ WindowManager:
 
     GridLayout:
         rows: 6
-
         TextInput:
             id: accEmail
             hint_text: "Pass your email"
@@ -75,6 +77,7 @@ WindowManager:
 <MainScreen>:
     name: "MainScreen"
 
-    BoxLayout:
+    GridLayout:
+        cols: 1
         Label:
-            text: "Logged"
+            id: accNumber

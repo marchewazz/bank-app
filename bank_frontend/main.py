@@ -1,12 +1,12 @@
-from kivy.uix.button import Button
 from kivy.app import App
 from kivy.lang.builder import Builder
+from kivy.properties import StringProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.popup import Popup
 
 import requests
 import json
 import re
+from classes import User
 
 
 class RegisterScreen(Screen):
@@ -42,7 +42,12 @@ class RegisterScreen(Screen):
                 except:
                     settingLabel("Server issue!")
                 else:
-                    settingLabel(response.text)
+                    response = json.loads(response.text)["message"]
+                    if response == "Added!":
+                        self.manager.current = "LoginScreen"
+                        self.manager.get_screen("LoginScreen").ids.information.text = "Account Created!"
+                    else:
+                        settingLabel(response)
 
         else:
             settingLabel("Missing data!")
@@ -69,12 +74,19 @@ class LoginScreen(Screen):
                     r = requests.get('http://127.0.0.1:8000/accounts/login', data=json.dumps({
                         "accountEmail": accountEmail,
                         "accountPassword": accountPass}))
-                    response = r.text
+                    response = r.json()
                 except:
                     settingLabel("Server issue!")
                 else:
-                    settingLabel(r.text)
+                    if response['message'] == "Logged!":
+                        userData = (json.loads(response['user']))[0]
+                        BankApp.LoggedUser = User(userData)
+                        userName = BankApp.LoggedUser.accountUser['firstName']
+                        self.manager.get_screen("MainScreen").ids.accNumber.text = f'Welcome, {userName}!'
+                        self.manager.current = 'MainScreen'
 
+                    else:
+                        settingLabel(response['message'])
         else:
             settingLabel("Missing data")
 
@@ -84,15 +96,13 @@ class MainScreen(Screen):
 
 
 class WindowManager(ScreenManager):
-    pass
-
-
-kv = Builder.load_file("main.kv")
+    something = StringProperty('test')
 
 
 class BankApp(App):
+    LoggedUser = User
     def build(self):
-        return kv
+        return Builder.load_file("main.kv")
 
 
 if __name__ == "__main__":
