@@ -1,5 +1,5 @@
 class User:
-    accountNumber = 'number'
+    accountNumber = ''
     accountEmail = ''
     accountUser = ''
     bills = ''
@@ -8,3 +8,9 @@ class User:
         self.accountEmail = userData['accountEmail']
         self.accountUser = userData['accountUser']
         self.bills = userData['bills']
+
+    def delete(self):
+        self.accountNumber = ''
+        self.accountEmail = ''
+        self.accountUser = ''
+        self.bills = ''

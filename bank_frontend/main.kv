@@ -78,6 +78,22 @@ WindowManager:
     name: "MainScreen"
 
     GridLayout:
-        cols: 1
+        rows: 3
+        GridLayout:
+            cols: 1
+            Button:
+                text: "Logout"
+                on_release:
+                    root.logout()
         Label:
             id: accNumber
+        GridLayout:
+            cols: 4
+            Button:
+                text: "Some function"
+            Button:
+                text: "Some function"
+            Button:
+                text: "Some function"
+            Button:
+                text: "Some function"

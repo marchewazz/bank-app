@@ -11,7 +11,6 @@ from classes import User
 
 class RegisterScreen(Screen):
     def loadingLabel(self):
-        #IT'S EVEN WEIRDER BUT I NEED THIS FUNCTION IN THIS SCOPE TO KV LANG
         self.ids.information.text = "Loading..."
     def register(self):
         def settingLabel(info):
@@ -55,7 +54,6 @@ class RegisterScreen(Screen):
 
 class LoginScreen(Screen):
     def loadingLabel(self):
-        #IT'S EVEN WEIRDER BUT I NEED THIS FUNCTION IN THIS SCOPE TO KV LANG
         self.ids.information.text = "Loading..."
     def login(self):
         def settingLabel(info):
@@ -92,7 +90,9 @@ class LoginScreen(Screen):
 
 
 class MainScreen(Screen):
-    pass
+    def logout(self):
+        BankApp.LoggedUser.delete()
+        self.manager.current = 'LoginScreen'
 
 
 class WindowManager(ScreenManager):
