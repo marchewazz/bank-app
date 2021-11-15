@@ -10,7 +10,6 @@ from secret import mongoUrl
 from bson.json_util import dumps
 
 
-
 @csrf_exempt
 def register(request):
     try:
@@ -27,12 +26,12 @@ def register(request):
             client.close()
             return JsonResponse({"message": "Database problem"})
         else:
-            if  not list(accountsWithPassedEmail):
+            if not list(accountsWithPassedEmail):
                 try:
                     now = datetime.datetime.now()
                     while True:
-                        #I NEED TO MAKE SURE ACCOUNT NUMBER IS UNIQUE
-                        randomAccNumber = str(randint(100000000000,999999999999))
+                        # I NEED TO MAKE SURE ACCOUNT NUMBER IS UNIQUE
+                        randomAccNumber = str(randint(100000000000, 999999999999))
                         if len(list(collection.find({"accountNumber": randomAccNumber}))) == 0: break
 
                     collection.insert_one({
@@ -56,6 +55,21 @@ def register(request):
 
 
 def login(request):
+    """
+        try:
+            client = MongoClient(mongoUrl)
+        except ConnectionError:
+            return JsonResponse({"message": "Database problem!"})
+        else:
+            db = client['bank']
+            collection = db['accounts']
+            userNumber = json.loads(request.body)
+            dateNow = {"$set": {"accountLastLoginData": datetime.datetime.now()}}
+            try:
+                collection.update_many(userNumber, dateNow)
+            except:
+                print('errpr')
+        """
     account = json.loads(request.body)
     print(account)
     try:
@@ -66,7 +80,7 @@ def login(request):
         try:
             db = client['bank']
             collection = db['accounts']
-            
+
             accountsWithPassedEmail = collection.find({"accountEmail": account['accountEmail']})
 
         except ConnectionError:
@@ -82,7 +96,13 @@ def login(request):
 
                 if hasher.verify(account['accountPassword'], password):
                     client.close()
-                    return JsonResponse({"message": "Logged!", "user": dumps(accountsWithPassedEmail, indent=2)})
+                    try:
+                        dateNow = {"$set": {"accountLastLoginData": datetime.datetime.now()}}
+                        collection.update_many({"accountNumber": accountsWithPassedEmail[0]['accountNumber']}, dateNow)
+                    except:
+                        return JsonResponse({"message": "Database error!"})
+                    else:
+                        return JsonResponse({"message": "Logged!", "user": dumps(accountsWithPassedEmail, indent=2)})
                 else:
                     client.close()
                     return JsonResponse({"message": "Wrong password!"})

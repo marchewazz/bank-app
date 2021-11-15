@@ -10,6 +10,13 @@ from classes import User
 
 
 class RegisterScreen(Screen):
+    def clearScreen(self):
+        self.ids.information.text = ""
+        self.ids.accEmail.text = ""
+        self.ids.accPassword.text = ""
+        self.ids.accFirstName.text = ""
+        self.ids.accLastName.text = ""
+
     def loadingLabel(self):
         self.ids.information.text = "Loading..."
     def register(self):
@@ -43,6 +50,7 @@ class RegisterScreen(Screen):
                 else:
                     response = json.loads(response.text)["message"]
                     if response == "Added!":
+                        self.clearScreen()
                         self.manager.current = "LoginScreen"
                         self.manager.get_screen("LoginScreen").ids.information.text = "Account Created!"
                     else:
@@ -53,6 +61,11 @@ class RegisterScreen(Screen):
 
 
 class LoginScreen(Screen):
+    def clearScreen(self):
+        self.ids.information.text = ""
+        self.ids.accEmail.text = ""
+        self.ids.accPassword.text = ""
+
     def loadingLabel(self):
         self.ids.information.text = "Loading..."
     def login(self):
@@ -79,6 +92,8 @@ class LoginScreen(Screen):
                     if response['message'] == "Logged!":
                         userData = (json.loads(response['user']))[0]
                         BankApp.LoggedUser = User(userData)
+                        self.manager.get_screen("RegisterScreen").clearScreen()
+                        self.clearScreen()
                         userName = BankApp.LoggedUser.accountUser['firstName']
                         self.manager.get_screen("MainScreen").ids.accNumber.text = f'Welcome, {userName}!'
                         self.manager.current = 'MainScreen'
