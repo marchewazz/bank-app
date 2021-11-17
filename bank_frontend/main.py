@@ -1,13 +1,13 @@
 from kivy.app import App
 from kivy.lang.builder import Builder
 from kivy.properties import StringProperty
-from kivy.uix.dropdown import DropDown
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 import requests
 import json
 import re
 from classes import User
+from secret import bankCurrency
 
 
 class RegisterScreen(Screen):
@@ -74,7 +74,7 @@ class LoginScreen(Screen):
 
     def createBillsChoose(self, bills):
         def formatBill(bill):
-            return f"Bill: {bill['billNumber']},name: {bill['billName']} ,balance: {bill['billBalance']}"
+            return f"Bill: {bill['billNumber']}, name: {bill['billName']}, balance: {str(bill['billBalance'])+bankCurrency}"
         billsArray = []
         for bill in bills:
             billsArray.append(formatBill(bill))
