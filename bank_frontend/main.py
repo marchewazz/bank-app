@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivy.lang.builder import Builder
 from kivy.properties import StringProperty
+from kivy.uix.dropdown import DropDown
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 import requests
@@ -19,9 +20,11 @@ class RegisterScreen(Screen):
 
     def loadingLabel(self):
         self.ids.information.text = "Loading..."
+
     def register(self):
         def settingLabel(info):
             self.ids.information.text = info
+
         accountName = {
             "firstName": self.ids.accFirstName.text,
             "lastName": self.ids.accLastName.text,
@@ -68,9 +71,19 @@ class LoginScreen(Screen):
 
     def loadingLabel(self):
         self.ids.information.text = "Loading..."
+
+    def createBillsChoose(self, bills):
+        def formatBill(bill):
+            return f"Bill: {bill['billNumber']},name: {bill['billName']} ,balance: {bill['billBalance']}"
+        billsArray = []
+        for bill in bills:
+            billsArray.append(formatBill(bill))
+        return billsArray
+
     def login(self):
         def settingLabel(info):
             self.ids.information.text = info
+
         accountEmail = self.ids.accEmail.text
         accountPass = self.ids.accPassword.text
         if accountEmail and accountPass:
@@ -96,6 +109,12 @@ class LoginScreen(Screen):
                         self.clearScreen()
                         userName = BankApp.LoggedUser.accountUser['firstName']
                         self.manager.get_screen("MainScreen").ids.accNumber.text = f'Welcome, {userName}!'
+                        if not BankApp.LoggedUser.bills:
+                            self.manager.get_screen("MainScreen").ids.selectedBill.text = "No bills available"
+                        else:
+                            self.manager.get_screen("MainScreen").ids.selectedBill.text = "Select bill"
+                            self.manager.get_screen("MainScreen").ids.selectedBill.values \
+                                = self.createBillsChoose(BankApp.LoggedUser.bills)
                         self.manager.current = 'MainScreen'
 
                     else:
@@ -109,6 +128,28 @@ class MainScreen(Screen):
         BankApp.LoggedUser.delete()
         self.manager.current = 'LoginScreen'
 
+class AddingBillScreen(Screen):
+
+    def loadingLabel(self):
+        self.ids.information.text = "Loading..."
+
+    def addBill(self):
+        def settingLabel(info):
+            self.ids.information.text = info
+        if not self.ids.billName.text:
+            settingLabel("Pass bill name")
+        elif len(self.ids.billName.text) < 4:
+            settingLabel("Bill name is too short")
+        else:
+            try:
+                r = requests.put('http://127.0.0.1:8000/bills/add', data=json.dumps({
+                    "accountNumber": BankApp.LoggedUser.accountNumber,
+                    "billName": self.ids.billName.text
+                }))
+            except:
+                settingLabel("Server issue!")
+            else:
+                settingLabel(r.json()['message'])
 
 class WindowManager(ScreenManager):
     something = StringProperty('test')
@@ -116,6 +157,7 @@ class WindowManager(ScreenManager):
 
 class BankApp(App):
     LoggedUser = User
+
     def build(self):
         return Builder.load_file("main.kv")
 

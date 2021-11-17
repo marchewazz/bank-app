@@ -1,10 +1,12 @@
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
+#:import DropDown kivy.uix.dropdown
 
 WindowManager:
     transition: FadeTransition()
     RegisterScreen:
     LoginScreen:
     MainScreen:
+    AddingBillScreen:
 
 <RegisterScreen>:
     name: "RegisterScreen"
@@ -40,7 +42,6 @@ WindowManager:
             Button:
                 text: "I have an account. Login"
                 on_release:
-                    root.manager.transition.direction = "left"
                     app.root.current = "LoginScreen"
 
 <LoginScreen>:
@@ -71,7 +72,6 @@ WindowManager:
             Button:
                 text: "I don't have an account. Register"
                 on_release:
-                    root.manager.transition.direction = "right"
                     app.root.current = "RegisterScreen"
 
 <MainScreen>:
@@ -80,7 +80,9 @@ WindowManager:
     GridLayout:
         rows: 3
         GridLayout:
-            cols: 1
+            cols: 2
+            Spinner:
+                id: selectedBill
             Button:
                 text: "Logout"
                 on_release:
@@ -90,10 +92,32 @@ WindowManager:
         GridLayout:
             cols: 4
             Button:
-                text: "Some function"
+                text: "Create new bill"
+                on_release:
+                    app.root.current = "AddingBillScreen"
+
+<AddingBillScreen>:
+    name: "AddingBillScreen"
+
+    GridLayout:
+        rows: 4
+
+        Label:
+            text: "Pass new bill data"
+        TextInput:
+            id: billName
+            hint_text: "Pass bill name"
+        Label:
+            id: information
+        GridLayout:
+            cols: 2
             Button:
-                text: "Some function"
+                text: "Back"
+                on_release:
+                    app.root.current = "MainScreen"
             Button:
-                text: "Some function"
-            Button:
-                text: "Some function"
+                text: "Add bill"
+                on_press:
+                    root.loadingLabel()
+                on_release:
+                    root.addBill()
