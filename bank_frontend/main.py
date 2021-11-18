@@ -149,6 +149,7 @@ class AddingBillScreen(Screen):
             except:
                 settingLabel("Server issue!")
             else:
+                print(r)
                 settingLabel(r.json()['message'])
 
 class WindowManager(ScreenManager):
