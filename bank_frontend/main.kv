@@ -79,6 +79,9 @@ WindowManager:
 <MainScreen>:
     name: "MainScreen"
 
+    on_pre_enter:
+        root.createData()
+
     GridLayout:
         rows: 3
         GridLayout:
@@ -91,7 +94,7 @@ WindowManager:
                 on_release:
                     root.logout()
         Label:
-            id: accNumber
+            id: mainWelcome
         GridLayout:
             cols: 4
             Button:

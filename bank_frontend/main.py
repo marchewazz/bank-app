@@ -74,15 +74,8 @@ class LoginScreen(Screen):
     def loadingLabel(self):
         self.ids.information.text = "Loading..."
 
-    def createBillsChoose(self, bills):
-        def formatBill(bill):
-            return f"Bill: {bill['billNumber']}, name: {bill['billName']}, balance: {str(bill['billBalance'])+bankCurrency}"
-        billsArray = []
-        for bill in bills:
-            billsArray.append(formatBill(bill))
-        return billsArray
-
     def login(self):
+
         def settingLabel(info):
             self.ids.information.text = info
 
@@ -109,15 +102,7 @@ class LoginScreen(Screen):
                         BankApp.LoggedUser = User(userData)
                         self.manager.get_screen("RegisterScreen").clearScreen()
                         self.clearScreen()
-                        userName = BankApp.LoggedUser.accountUser['firstName']
-                        self.manager.get_screen("MainScreen").ids.accNumber.text = f'Welcome, {userName}!'
-                        if not BankApp.LoggedUser.bills:
-                            self.manager.get_screen("MainScreen").ids.selectedBill.text = "No bills available"
-                        else:
-                            self.manager.get_screen("MainScreen").ids.selectedBill.values \
-                                = self.createBillsChoose(BankApp.LoggedUser.bills)
                         self.manager.current = 'MainScreen'
-
                     else:
                         settingLabel(response['message'])
         else:
@@ -125,6 +110,24 @@ class LoginScreen(Screen):
 
 
 class MainScreen(Screen):
+
+    def createBillsChoice(self, bills):
+        def formatBill(bill):
+            return f"Bill: {bill['billNumber']}, name: {bill['billName']}, balance: {str(bill['billBalance']) + bankCurrency}"
+
+        billsArray = []
+        for bill in bills:
+            billsArray.append(formatBill(bill))
+        return billsArray
+
+    def createData(self):
+        self.ids.mainWelcome.text = f"Welcome, {BankApp.LoggedUser.accountUser['firstName']}!"
+        if not BankApp.LoggedUser.bills:
+            self.ids.selectedBill.text = "No bills available"
+        else:
+            self.ids.selectedBill.values \
+                = self.createBillsChoice(BankApp.LoggedUser.bills)
+
     def logout(self):
         BankApp.LoggedUser.delete()
         self.manager.current = 'LoginScreen'
