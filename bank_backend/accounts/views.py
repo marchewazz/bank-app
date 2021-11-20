@@ -1,5 +1,6 @@
+import pymongo
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from passlib.hash import django_pbkdf2_sha256 as hasher
 
 from pymongo import MongoClient
@@ -55,21 +56,7 @@ def register(request):
 
 
 def login(request):
-    """
-        try:
-            client = MongoClient(mongoUrl)
-        except ConnectionError:
-            return JsonResponse({"message": "Database problem!"})
-        else:
-            db = client['bank']
-            collection = db['accounts']
-            userNumber = json.loads(request.body)
-            dateNow = {"$set": {"accountLastLoginData": datetime.datetime.now()}}
-            try:
-                collection.update_many(userNumber, dateNow)
-            except:
-                print('errpr')
-        """
+    print([pymongo.has_c()])
     account = json.loads(request.body)
     print(account)
     try:

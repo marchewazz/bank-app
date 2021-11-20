@@ -1,0 +1,3 @@
+title=<BankApp>
+author=<marchewaz>
+orientation=<portrait>

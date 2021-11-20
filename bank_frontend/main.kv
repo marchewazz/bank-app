@@ -7,12 +7,14 @@ WindowManager:
     LoginScreen:
     MainScreen:
     AddingBillScreen:
+    MakingTransferScreen:
 
 <RegisterScreen>:
     name: "RegisterScreen"
 
     GridLayout:
         rows: 6
+
         TextInput:
             id: accEmail
             hint_text: "Pass your email"
@@ -83,6 +85,7 @@ WindowManager:
             cols: 2
             Spinner:
                 id: selectedBill
+                text: "Select bill"
             Button:
                 text: "Logout"
                 on_release:
@@ -95,6 +98,10 @@ WindowManager:
                 text: "Create new bill"
                 on_release:
                     app.root.current = "AddingBillScreen"
+            Button:
+                text: "Make a transfer"
+                on_release:
+                    app.root.current = "MakingTransferScreen"
 
 <AddingBillScreen>:
     name: "AddingBillScreen"
@@ -117,6 +124,70 @@ WindowManager:
                     app.root.current = "MainScreen"
             Button:
                 text: "Add bill"
+                on_press:
+                    root.loadingLabel()
+                on_release:
+                    root.addBill()
+
+<MakingTransferScreen>:
+    name: "MakingTransferScreen"
+
+    on_pre_enter:
+        root.createData()
+    GridLayout:
+        rows: 5
+        GridLayout:
+            cols: 2
+            Label:
+                text: "From:"
+            Spinner:
+                id: selectBill
+                text: "Select bill"
+        GridLayout:
+            rows: 2
+            BoxLayout:
+                orientation: "horizontal"
+                Label:
+                    text: "To:"
+                GridLayout:
+                    cols: 2
+                    ToggleButton:
+                        id: optionNumber
+                        text: "Pass a number"
+                        group: "receiverOptions"
+                        on_release:
+                            root.chooseOption()
+                        allow_no_selection: False
+                    ToggleButton:
+                        id: optionFavorites
+                        text: "Select from favorites"
+                        state: "down"
+                        group: "receiverOptions"
+                        on_release:
+                            root.chooseOption()
+                        allow_no_selection: False
+            BoxLayout:
+                TextInput:
+                    id: billNumber
+                    text_hint: "Type here"
+                Spinner:
+                    id: favoriteBills
+        GridLayout:
+            cols: 2
+            Label:
+                text: "Amount($)"
+            TextInput:
+                input_filter: "float"
+        Label:
+            id: information
+        GridLayout:
+            cols: 2
+            Button:
+                text: "Back"
+                on_release:
+                    app.root.current = "MainScreen"
+            Button:
+                text: "Confirm a transfer"
                 on_press:
                     root.loadingLabel()
                 on_release:
