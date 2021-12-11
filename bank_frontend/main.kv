@@ -88,7 +88,7 @@ WindowManager:
             cols: 2
             Spinner:
                 id: selectedBill
-                text: "Select bill"
+                text: "Select a bill"
             Button:
                 text: "Logout"
                 on_release:
@@ -145,7 +145,7 @@ WindowManager:
                 text: "From:"
             Spinner:
                 id: selectBill
-                text: "Select bill"
+                text: "Select a bill"
         GridLayout:
             rows: 2
             BoxLayout:
@@ -170,17 +170,30 @@ WindowManager:
                             root.chooseOption()
                         allow_no_selection: False
             BoxLayout:
+                id: passingReceiverInput
                 TextInput:
                     id: billNumber
                     text_hint: "Type here"
+                    input_filter: "int"
                 Spinner:
                     id: favoriteBills
         GridLayout:
-            cols: 2
-            Label:
-                text: "Amount($)"
-            TextInput:
-                input_filter: "float"
+            rows: 2
+            GridLayout:
+                cols: 2
+                Label:
+                    text: "Amount($)"
+                TextInput:
+                    id: amount
+                    input_filter: "float"
+                    on_text:
+                        root.validateAmount()
+            GridLayout:
+                cols: 2
+                Label:
+                    text: "Note"
+                TextInput:
+                    id: note
         Label:
             id: information
         GridLayout:
@@ -194,4 +207,4 @@ WindowManager:
                 on_press:
                     root.loadingLabel()
                 on_release:
-                    root.addBill()
+                    root.makeTransfer()

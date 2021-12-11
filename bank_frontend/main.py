@@ -1,8 +1,7 @@
-import random
-
 from kivy.app import App
+from kivy.clock import Clock
 from kivy.lang.builder import Builder
-from kivy.properties import StringProperty
+from functools import partial
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 import requests
@@ -23,10 +22,10 @@ class RegisterScreen(Screen):
     def loadingLabel(self):
         self.ids.information.text = "Loading..."
 
-    def register(self):
-        def settingLabel(info):
-            self.ids.information.text = info
+    def settingInfoLabel(self, info):
+        self.ids.information.text = info
 
+    def register(self):
         accountName = {
             "firstName": self.ids.accFirstName.text,
             "lastName": self.ids.accLastName.text,
@@ -35,13 +34,13 @@ class RegisterScreen(Screen):
         accountPass = self.ids.accPassword.text
         if accountName and accountEmail and accountPass:
             if not (re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', accountEmail)):
-                settingLabel("Invalid email!")
+                self.settingInfoLabel("Invalid email!")
             elif re.search(r'\d', accountName["firstName"]) or re.search(r'\d', accountName["lastName"]):
-                settingLabel("How is it to have digit in name?")
+                self.settingInfoLabel("How is it to have digit in name?")
             elif len(accountPass) < 8:
-                settingLabel("Too short password!")
+                self.settingInfoLabel("Too short password!")
             elif len(accountPass) > 25:
-                settingLabel("Too long password!")
+                self.settingInfoLabel("Too long password!")
             else:
                 try:
                     response = requests.post(
@@ -51,7 +50,7 @@ class RegisterScreen(Screen):
                                          'accountPass': accountPass,
                                          }))
                 except:
-                    settingLabel("Server issue!")
+                    self.settingInfoLabel("Server issue!")
                 else:
                     response = json.loads(response.text)["message"]
                     if response == "Added!":
@@ -59,13 +58,14 @@ class RegisterScreen(Screen):
                         self.manager.current = "LoginScreen"
                         self.manager.get_screen("LoginScreen").ids.information.text = "Account Created!"
                     else:
-                        settingLabel(response)
+                        self.settingInfoLabel(response)
 
         else:
-            settingLabel("Missing data!")
+            self.settingInfoLabel("Missing data!")
 
 
 class LoginScreen(Screen):
+
     def clearScreen(self):
         self.ids.information.text = ""
         self.ids.accEmail.text = ""
@@ -74,20 +74,19 @@ class LoginScreen(Screen):
     def loadingLabel(self):
         self.ids.information.text = "Loading..."
 
+    def settingInfoLabel(self, info):
+        self.ids.information.text = info
+
     def login(self):
-
-        def settingLabel(info):
-            self.ids.information.text = info
-
         accountEmail = self.ids.accEmail.text
         accountPass = self.ids.accPassword.text
         if accountEmail and accountPass:
             if not (re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', accountEmail)):
-                settingLabel("Invalid email!")
+                self.settingInfoLabel("Invalid email!")
             elif len(accountPass) < 8:
-                settingLabel("Too short password!")
+                self.settingInfoLabel("Too short password!")
             elif len(accountPass) > 25:
-                settingLabel("Too long password!")
+                self.settingInfoLabel("Too long password!")
             else:
                 try:
                     r = requests.get('http://127.0.0.1:8000/accounts/login', data=json.dumps({
@@ -95,7 +94,7 @@ class LoginScreen(Screen):
                         "accountPassword": accountPass}))
                     response = r.json()
                 except:
-                    settingLabel("Server issue!")
+                    self.settingInfoLabel("Server issue!")
                 else:
                     if response['message'] == "Logged!":
                         userData = (json.loads(response['user']))[0]
@@ -104,9 +103,9 @@ class LoginScreen(Screen):
                         self.clearScreen()
                         self.manager.current = 'MainScreen'
                     else:
-                        settingLabel(response['message'])
+                        self.settingInfoLabel(response['message'])
         else:
-            settingLabel("Missing data")
+            self.settingInfoLabel("Missing data")
 
 
 class MainScreen(Screen):
@@ -138,13 +137,14 @@ class AddingBillScreen(Screen):
     def loadingLabel(self):
         self.ids.information.text = "Loading..."
 
+    def settingInfoLabel(self, info):
+        self.ids.information.text = info
+
     def addBill(self):
-        def settingLabel(info):
-            self.ids.information.text = info
         if not self.ids.billName.text:
-            settingLabel("Pass bill name")
+            self.settingInfoLabel("Pass bill name")
         elif len(self.ids.billName.text) < 4:
-            settingLabel("Bill name is too short")
+            self.settingInfoLabel("Bill name is too short")
         else:
             try:
                 r = requests.put('http://127.0.0.1:8000/bills/add', data=json.dumps({
@@ -152,16 +152,19 @@ class AddingBillScreen(Screen):
                     "billName": self.ids.billName.text
                 }))
             except:
-                settingLabel("Server issue!")
+                self.settingInfoLabel("Server issue!")
             else:
                 print(r)
-                settingLabel(r.json()['message'])
+                self.settingInfoLabel(r.json()['message'])
 
 
 class MakingTransferScreen(Screen):
 
     def loadingLabel(self):
         self.ids.information.text = "Loading..."
+
+    def settingInfoLabel(self, info):
+        self.ids.information.text = info
 
     def createBillsChoice(self, bills):
         def formatBill(bill):
@@ -199,8 +202,60 @@ class MakingTransferScreen(Screen):
             self.ids.billNumber.opacity = 1
             self.ids.favoriteBills.opacity = 0
 
-    def addBil(self):
-        print("add bill")
+    def validateAmount(self):
+
+        amount = self.ids.amount.text
+        if amount:
+            if "." in amount:
+                if len(self.ids.amount.text.split(".", 1)[1]) > 2:
+                    amount = amount[:-1]
+                    self.ids.amount.text = amount
+            if "-" in amount:
+                self.ids.amount.text = ""
+            if amount[0] == ".":
+                self.ids.amount.text = "0."
+            if amount[0] == "0":
+                if len(amount) > 1:
+                    if amount[1] != "0" and amount[1] != ".":
+                        self.ids.amount.text = self.ids.amount.text[1:]
+    def makeTransfer(self):
+        self.loadingLabel()
+
+        if self.ids.selectBill.text == "Select a bill":
+            self.settingInfoLabel("Select sender")
+            return
+        else:
+            senderNumber = re.search('Bill: (.+?), ', self.ids.selectBill.text).group(1)
+
+        if self.ids.optionFavorites.state == 'down':
+            print(self.ids.favoriteBills.text)
+            if self.ids.favoriteBills.text == "Select a bill":
+                self.settingInfoLabel("Select receiver")
+                return
+            else:
+                receiverNumber = re.search('Bill: (.+?), ', self.ids.favoriteBills.text).group(1)
+
+        if self.ids.optionNumber.state == 'down':
+            if bool(re.match(r"(\d{12})$", self.ids.billNumber.text)):
+                receiverNumber = self.ids.billNumber.text
+            else:
+                self.settingInfoLabel("Pass correct receiver number")
+                return
+
+        if not self.ids.amount.text:
+            self.settingInfoLabel("Pass amount")
+            return
+        else:
+            amount = self.ids.amount.text
+
+        note = self.ids.note.text
+        r = requests.put("http://127.0.0.1:8000/transaction/transfer", data=json.dumps({
+            "sender": senderNumber,
+            "receiver": receiverNumber,
+            "amount": float(amount),
+            "note": note
+        }))
+        self.settingInfoLabel(r.json()['message'])
 
 
 class WindowManager(ScreenManager):

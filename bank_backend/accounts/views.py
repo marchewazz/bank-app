@@ -42,7 +42,8 @@ def register(request):
                         "accountCreateDate": now,
                         "accountLastLoginData": now,
                         "accountPass": hasher.hash(account['accountPass']),
-                        "bills": []
+                        "bills": [],
+                        "favoriteBills": []
                     })
                 except ConnectionError:
                     client.close()

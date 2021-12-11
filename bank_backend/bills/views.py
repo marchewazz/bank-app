@@ -51,7 +51,7 @@ def addBill(request):
                     { "$push": { "bills" : {
                             "billNumber": billNumber,
                             "billName": billName,
-                            "billBalance": 0
+                            "billBalance": 0.00
                         }}
                     }
                 )
