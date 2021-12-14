@@ -1,6 +1,6 @@
 import pymongo
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from passlib.hash import django_pbkdf2_sha256 as hasher
 
 from pymongo import MongoClient
@@ -94,3 +94,6 @@ def login(request):
                 else:
                     client.close()
                     return JsonResponse({"message": "Wrong password!"})
+
+def refreshUserData(request):
+    return HttpResponse("hehe")
