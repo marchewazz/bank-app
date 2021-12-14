@@ -1,14 +1,12 @@
 from kivy.app import App
-from kivy.clock import Clock
 from kivy.lang.builder import Builder
-from functools import partial
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 import requests
 import json
 import re
 from classes import User
-from secret import bankCurrency
+from config import bankCurrency, backendUrl
 
 
 class RegisterScreen(Screen):
@@ -44,7 +42,7 @@ class RegisterScreen(Screen):
             else:
                 try:
                     response = requests.post(
-                        'http://127.0.0.1:8000/accounts/register',
+                        f'{backendUrl}/accounts/register',
                         data=json.dumps({'accountName': accountName,
                                          'accountEmail': accountEmail,
                                          'accountPass': accountPass,
@@ -89,7 +87,7 @@ class LoginScreen(Screen):
                 self.settingInfoLabel("Too long password!")
             else:
                 try:
-                    r = requests.get('http://127.0.0.1:8000/accounts/login', data=json.dumps({
+                    r = requests.get(f'{backendUrl}/accounts/login', data=json.dumps({
                         "accountEmail": accountEmail,
                         "accountPassword": accountPass}))
                     response = r.json()
@@ -147,7 +145,7 @@ class AddingBillScreen(Screen):
             self.settingInfoLabel("Bill name is too short")
         else:
             try:
-                r = requests.put('http://127.0.0.1:8000/bills/add', data=json.dumps({
+                r = requests.put(f'{backendUrl}/bills/add', data=json.dumps({
                     "accountNumber": BankApp.LoggedUser.accountNumber,
                     "billName": self.ids.billName.text
                 }))
@@ -249,7 +247,7 @@ class MakingTransferScreen(Screen):
             amount = self.ids.amount.text
 
         note = self.ids.note.text
-        r = requests.put("http://127.0.0.1:8000/transaction/transfer", data=json.dumps({
+        r = requests.put(f'{backendUrl}/transaction/transfer', data=json.dumps({
             "sender": senderNumber,
             "receiver": receiverNumber,
             "amount": float(amount),

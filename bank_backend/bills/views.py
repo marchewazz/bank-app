@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 import json
 from pymongo import MongoClient
-from secret import mongoUrl
+from config import mongoUrl
 from random import randint
 
 

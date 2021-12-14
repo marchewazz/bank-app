@@ -7,7 +7,7 @@ from pymongo import MongoClient
 from random import randint
 import json
 import datetime
-from secret import mongoUrl
+from config import mongoUrl
 from bson.json_util import dumps
 
 

@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from pymongo import MongoClient, ReturnDocument
-from secret import mongoUrl
+from config import mongoUrl
 import json
 from bson.json_util import dumps
 
