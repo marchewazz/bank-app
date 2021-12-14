@@ -96,4 +96,19 @@ def login(request):
                     return JsonResponse({"message": "Wrong password!"})
 
 def refreshUserData(request):
-    return HttpResponse("hehe")
+    accountNumber = json.loads(request.body)['accountNumber']
+    print(accountNumber)
+    try:
+        client = MongoClient(mongoUrl)
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        try:
+            db = client['bank']
+            collection = db['accounts']
+
+            userData = collection.find({"accountNumber": accountNumber})
+        except ConnectionError:
+            return JsonResponse({"message": "Database problem!"})
+        else:
+            return JsonResponse({"user": dumps(userData, indent=2)})

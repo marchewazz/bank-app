@@ -107,6 +107,9 @@ WindowManager:
 <AddingBillScreen>:
     name: "AddingBillScreen"
 
+    on_pre_enter:
+        root.createData()
+
     GridLayout:
         rows: 4
 

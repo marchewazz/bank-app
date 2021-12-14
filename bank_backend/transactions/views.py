@@ -41,7 +41,6 @@ def transferMoney(request):
                                 "billNumber": transferData['sender']
                             }
                         }}
-                    newValue = { "$inc": {'bills.': -transferData['amount']}}
                     accountsCol.update_one({"bills.billNumber": transferData['sender']}, {"$inc": {"bills.$.billBalance": -transferData['amount']}}, session=session)
                     accountsCol.update_one({"bills.billNumber": transferData['receiver']}, {"$inc": {"bills.$.billBalance": transferData['amount']}}, session=session)
 

@@ -8,7 +8,12 @@ import re
 from classes import User
 from config import bankCurrency, backendUrl
 
-
+#some functions
+def updateUserData():
+    response = requests.get(f'{backendUrl}/accounts/refresh', data=json.dumps({"accountNumber": BankApp.LoggedUser.accountNumber}))
+    userData = json.loads(response.json()['user'])[0]
+    BankApp.LoggedUser = User(userData)
+# app classes
 class RegisterScreen(Screen):
     def clearScreen(self):
         self.ids.information.text = ""
@@ -118,6 +123,7 @@ class MainScreen(Screen):
         return billsArray
 
     def createData(self):
+        updateUserData()
         self.ids.mainWelcome.text = f"Welcome, {BankApp.LoggedUser.accountUser['firstName']}!"
         if not BankApp.LoggedUser.bills:
             self.ids.selectedBill.text = "No bills available"
@@ -154,7 +160,8 @@ class AddingBillScreen(Screen):
             else:
                 print(r)
                 self.settingInfoLabel(r.json()['message'])
-
+    def createData(self):
+        updateUserData()
 
 class MakingTransferScreen(Screen):
 
@@ -183,6 +190,7 @@ class MakingTransferScreen(Screen):
         return billsArray
 
     def createData(self):
+        updateUserData()
         self.ids.selectBill.values = self.createBillsChoice(BankApp.LoggedUser.bills)
         self.chooseOption()
         if not BankApp.LoggedUser.favoritesBills:
