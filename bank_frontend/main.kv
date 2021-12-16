@@ -3,6 +3,7 @@
 WindowManager:
     RegisterScreen:
     LoginScreen:
+    ValidatingPINScreen:
     MainScreen:
     AddingBillScreen:
     MakingTransferScreen:
@@ -11,7 +12,7 @@ WindowManager:
     name: "RegisterScreen"
 
     GridLayout:
-        rows: 6
+        rows: 7
 
         TextInput:
             id: accEmail
@@ -26,6 +27,13 @@ WindowManager:
             password: True
             id: accPassword
             hint_text: "Pass your password"
+        TextInput:
+            password: True
+            id: accPIN
+            hint_text: "Pass your PIN"
+            input_filter: "int"
+            on_text:
+                root.validateInputs()
         GridLayout:
             id: informationGrid
             cols: 1
@@ -73,6 +81,33 @@ WindowManager:
                 text: "I don't have an account. Register"
                 on_release:
                     app.root.current = "RegisterScreen"
+
+<ValidatingPINScreen>:
+    name: "ValidatingPINScreen"
+
+    GridLayout:
+        rows: 4
+        Label:
+            text: "Pass PIN"
+        TextInput:
+            password: True
+            id: accPIN
+            hint_text: "Pass your PIN"
+            input_filter: "int"
+            on_text:
+                root.validatePIN()
+        Label:
+            id: information
+        GridLayout:
+            cols: 2
+            Button:
+                text: "Back"
+                on_release:
+                    app.root.current = "LoginScreen"
+            Button:
+                text: "Login"
+                on_release:
+                    root.login()
 
 <MainScreen>:
     name: "MainScreen"

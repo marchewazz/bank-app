@@ -42,6 +42,7 @@ def register(request):
                         "accountCreateDate": now,
                         "accountLastLoginData": now,
                         "accountPass": hasher.hash(account['accountPass']),
+                        "accountPIN": hasher.hash(account['accountPIN']),
                         "bills": [],
                         "favoriteBills": []
                     })
@@ -57,7 +58,6 @@ def register(request):
 
 
 def login(request):
-    print([pymongo.has_c()])
     account = json.loads(request.body)
     print(account)
     try:
@@ -90,10 +90,29 @@ def login(request):
                     except:
                         return JsonResponse({"message": "Database error!"})
                     else:
-                        return JsonResponse({"message": "Logged!", "user": dumps(accountsWithPassedEmail, indent=2)})
+                        return JsonResponse({"message": "Valid data!", "user": dumps(accountsWithPassedEmail, indent=2)})
                 else:
                     client.close()
                     return JsonResponse({"message": "Wrong password!"})
+
+
+def validatePIN(request):
+    userData = json.loads(request.body)
+    print(userData['accountEmail'])
+    try:
+        client = MongoClient(mongoUrl)
+        db = client['bank']
+        collection = db['accounts']
+        account = collection.find_one({"accountEmail": userData['accountEmail']})
+
+    except ConnectionError:
+        return JsonResponse({"message": "Server problem!"})
+    else:
+        if hasher.verify(userData['accountPIN'], account['accountPIN']):
+            return JsonResponse({"message": "Logged!", "user": dumps(account, indent=2)})
+        else:
+            return JsonResponse({"message": "Wrong PIN!"})
+
 
 def refreshUserData(request):
     accountNumber = json.loads(request.body)['accountNumber']
