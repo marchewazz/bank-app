@@ -46,6 +46,7 @@ class RegisterScreen(Screen):
         accountPass = self.ids.accPassword.text
         accountPIN = self.ids.accPIN.text
         if accountName and accountEmail and accountPass and accountPIN:
+            wrongPINs = ["1234", "4321", "2137"]
             if not (re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', accountEmail)):
                 self.settingInfoLabel("Invalid email!")
             elif re.search(r'\d', accountName["firstName"]) or re.search(r'\d', accountName["lastName"]):
@@ -56,6 +57,10 @@ class RegisterScreen(Screen):
                 self.settingInfoLabel("Too long password!")
             elif len(accountPIN) != 4:
                 self.settingInfoLabel("PIN must be 4 digits long!")
+            elif len(set(accountPIN)) == 1:
+                self.settingInfoLabel("PIN cannot contain 4 same characters")
+            elif accountPIN in wrongPINs:
+                self.settingInfoLabel("This PIN is too easy, pass different")
             else:
                 try:
                     response = requests.post(
