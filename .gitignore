@@ -3,3 +3,4 @@ venv
 .idea
 Pipfile
 Pipfile.lock
+bank_react/node_modules
