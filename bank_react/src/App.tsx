@@ -9,8 +9,8 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-        <Route path='/' element={<MainPage/>} />
-        <Route path='/authorization' element={<AuthorizationPage/>} />
+          <Route path='/' element={<MainPage/>} />
+          <Route path='/authorization/:email' element={<AuthorizationPage/>} />
         </Routes>
       </BrowserRouter>
     </>

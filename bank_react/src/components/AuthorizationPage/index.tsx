@@ -1,8 +1,9 @@
 import React from "react";
+import AuthForm from "./AuthForm";
 
 function AuthorizationPage(){
     return (
-        <p className="bg-red-700">Auth here</p>
+        <AuthForm />
     )
 }
 
