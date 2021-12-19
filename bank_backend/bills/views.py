@@ -60,3 +60,7 @@ def addBill(request):
                 return JsonResponse({"message": "Database problem"})
             else:
                 return JsonResponse({"message": "Bill created!"})
+@csrf_exempt
+def test(request):
+    print(json.loads(request.body))
+    return JsonResponse({"x": 5})

@@ -42,7 +42,7 @@ def register(request):
                         "accountCreateDate": now,
                         "accountLastLoginData": now,
                         "accountPass": hasher.hash(account['accountPass']),
-                        "accountPIN": hasher.hash(account['accountPIN']),
+                        "accountPIN": account['accountPIN'],
                         "bills": [],
                         "favoriteBills": []
                     })
@@ -56,7 +56,7 @@ def register(request):
                 client.close()
                 return JsonResponse({"message": "We've got already account!"})
 
-
+@csrf_exempt
 def login(request):
     account = json.loads(request.body)
     print(account)
@@ -95,10 +95,10 @@ def login(request):
                     client.close()
                     return JsonResponse({"message": "Wrong password!"})
 
-
+@csrf_exempt
 def validatePIN(request):
     userData = json.loads(request.body)
-    print(userData['accountEmail'])
+    print(userData)
     try:
         client = MongoClient(mongoUrl)
         db = client['bank']
@@ -108,7 +108,7 @@ def validatePIN(request):
     except ConnectionError:
         return JsonResponse({"message": "Server problem!"})
     else:
-        if hasher.verify(userData['accountPIN'], account['accountPIN']):
+        if userData['accountPIN'] == account['accountPIN']:
             return JsonResponse({"message": "Logged!", "user": dumps(account, indent=2)})
         else:
             return JsonResponse({"message": "Wrong PIN!"})
