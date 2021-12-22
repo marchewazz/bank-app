@@ -75,3 +75,46 @@ def transferMoney(request):
                         return JsonResponse({"message": "Not enough money on a bill"})
                 else:
                     return JsonResponse({"message": "Check your sender and receiver data and try again later"})
+@csrf_exempt
+def getHistoryByAccount(request):
+
+    #accountNumber = json.loads(request.body)['accountNumber']
+    accountNumber = "313438199320"
+
+    try:
+        client = MongoClient(mongoUrl)
+        db = client['bank']
+        transactions = db['transactions']
+
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        history = list(transactions.find({"$or": [
+            {"receiver.account": accountNumber},
+            {"sender.account": accountNumber},
+        ]}))
+
+        print(history)
+
+        return JsonResponse({"message": "x"})
+
+@csrf_exempt
+def getHistoryByBill(request):
+    accountNumber = json.loads(request.body)['accountNumber']
+    print(request.body)
+    try:
+        client = MongoClient(mongoUrl)
+        db = client['bank']
+        transactions = db['transactions']
+
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        history = list(transactions.find({"$or": [
+            {"receiver.bill": accountNumber},
+            {"sender.bill": accountNumber},
+        ]}))
+
+        print(history)
+
+        return JsonResponse({"bills": dumps(history, indent=2)})

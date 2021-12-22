@@ -96,7 +96,7 @@ def login(request):
                     return JsonResponse({"message": "Wrong password!"})
 
 @csrf_exempt
-def validatePIN(request):
+def validatePINByEmail(request):
     userData = json.loads(request.body)
     print(userData)
     try:
@@ -131,3 +131,21 @@ def refreshUserData(request):
             return JsonResponse({"message": "Database problem!"})
         else:
             return JsonResponse({"user": dumps(userData, indent=2)})
+
+@csrf_exempt
+def validatePINByAccNumber(request):
+    userData = json.loads(request.body)
+    print(userData)
+    try:
+        client = MongoClient(mongoUrl)
+        db = client['bank']
+        collection = db['accounts']
+        account = collection.find_one({"accountNumber": userData['accountNumber']})
+
+    except ConnectionError:
+        return JsonResponse({"message": "Server problem!"})
+    else:
+        if userData['accountPIN'] == account['accountPIN']:
+            return JsonResponse({"message": "Logged!", "user": dumps(account, indent=2)})
+        else:
+            return JsonResponse({"message": "Wrong PIN!"})

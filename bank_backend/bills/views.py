@@ -60,7 +60,20 @@ def addBill(request):
                 return JsonResponse({"message": "Database problem"})
             else:
                 return JsonResponse({"message": "Bill created!"})
+
 @csrf_exempt
-def test(request):
-    print(json.loads(request.body))
-    return JsonResponse({"x": 5})
+def getBills(request):
+    accountNumber = json.loads(request.body)['accountNumber']
+    print(accountNumber)
+    try:
+        client = MongoClient(mongoUrl)
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        db = client['bank']
+        collection = db['accounts']
+
+        accountBills = list(collection.find({"accountNumber": accountNumber}, {"_id": 0,"bills": 1}))[0]['bills']
+        print(accountBills)
+        return JsonResponse({"bills": accountBills})
+

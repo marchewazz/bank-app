@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path('register', views.register, name='register'),
     path('login', views.login, name='login'),
-    path('pin', views.validatePIN, name='pin'),
+    path('pinemail', views.validatePINByEmail, name='pin'),
+    path('pinnumber', views.validatePINByAccNumber, name='pin'),
     path('refresh', views.refreshUserData, name='refresh'),
 ]
