@@ -11,6 +11,9 @@ WindowManager:
 <RegisterScreen>:
     name: "RegisterScreen"
 
+    on_pre_enter:
+        root.clearScreen()
+
     GridLayout:
         rows: 7
 
@@ -55,6 +58,9 @@ WindowManager:
 <LoginScreen>:
     name: "LoginScreen"
 
+    on_pre_enter:
+        root.clearScreen()
+
     GridLayout:
         rows: 2
 
@@ -66,7 +72,7 @@ WindowManager:
             TextInput:
                 password: True
                 id: accPassword
-                hint_text: "Pass email"
+                hint_text: "Pass password"
             Label:
                 id: information
         GridLayout:
@@ -83,6 +89,10 @@ WindowManager:
                     app.root.current = "RegisterScreen"
 
 <ValidatingPINScreen>:
+
+    on_pre_enter:
+        root.clearScreen()
+
     name: "ValidatingPINScreen"
 
     GridLayout:

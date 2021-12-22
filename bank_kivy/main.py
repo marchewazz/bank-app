@@ -1,3 +1,5 @@
+import shelve
+
 from kivy.app import App
 from kivy.lang.builder import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -118,7 +120,6 @@ class LoginScreen(Screen):
                     self.settingInfoLabel("Server issue!")
                 else:
                     if response['message'] == "Valid data!":
-                        self.manager.get_screen("RegisterScreen").clearScreen()
                         self.manager.current = 'ValidatingPINScreen'
                     else:
                         self.settingInfoLabel(response['message'])
@@ -129,6 +130,9 @@ class LoginScreen(Screen):
 class ValidatingPINScreen(Screen):
 
     tries = 0
+    def clearScreen(self):
+        self.ids.accPIN.text = ""
+        self.ids.information.text = ""
 
     def validatePIN(self):
         if (len(self.ids.accPIN.text) > 4):
@@ -207,6 +211,7 @@ class AddingBillScreen(Screen):
                 print(r)
                 self.settingInfoLabel(r.json()['message'])
     def createData(self):
+        self.ids.information.text = ""
         updateUserData()
 
 class MakingTransferScreen(Screen):
@@ -236,6 +241,11 @@ class MakingTransferScreen(Screen):
         return billsArray
 
     def createData(self):
+        self.ids.information.text = ""
+        self.ids.amount.text = ""
+        self.ids.billNumber.text = ""
+        self.ids.note.text = ""
+
         updateUserData()
         self.ids.selectBill.values = self.createBillsChoice(BankApp.LoggedUser.bills)
         self.chooseOption()
