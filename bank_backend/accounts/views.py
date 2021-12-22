@@ -1,4 +1,3 @@
-import pymongo
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from passlib.hash import django_pbkdf2_sha256 as hasher
@@ -9,7 +8,7 @@ import json
 import datetime
 from config import mongoUrl
 from bson.json_util import dumps
-
+import requests
 
 @csrf_exempt
 def register(request):
@@ -50,6 +49,10 @@ def register(request):
                     client.close()
                     return JsonResponse({"message": "Query problem!"})
                 else:
+                    r = requests.put(f"http://127.0.0.1:8000/bills/add", data=json.dumps({
+                        "accountNumber": randomAccNumber,
+                        "billName": "Main bill"
+                    }))
                     client.close()
                     return JsonResponse({"message": "Added!"})
             else:
