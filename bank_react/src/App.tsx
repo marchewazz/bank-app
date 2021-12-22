@@ -3,6 +3,7 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
 import MainPage from './components/MainPage';
 import AuthorizationPage from './components/AuthorizationPage';
+import PaymentPage from './components/PaymentPage';
 
 function App() {
   return (
@@ -10,7 +11,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<MainPage/>} />
-          <Route path='/authorization/:email' element={<AuthorizationPage/>} />
+          <Route path='/authorization' element={<AuthorizationPage/>} />
+          <Route path='/payment' element={<PaymentPage/>} />
         </Routes>
       </BrowserRouter>
     </>

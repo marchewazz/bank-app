@@ -13,7 +13,7 @@ function PINForm(props: any){
             accountEmail: props.email,
             accountPIN: data.get("pin")
         }
-        as.validatePIN(userData).then((res: any) => {
+        as.validatePINByEmail(userData).then((res: any) => {
             if(res.data.message === "Logged!") {
                 window.location.href = `http://localhost:4200/confirmedauth/?accountnumber=${JSON.parse(res.data.user).accountNumber}`;
             }
@@ -22,7 +22,7 @@ function PINForm(props: any){
     return(
         <form onSubmit={validatePIN}>
             <input type="password" name="pin" minLength={4} maxLength={4} required />
-            <button>fsaf</button>
+            <button>OK</button>
         </form>
     )
 }

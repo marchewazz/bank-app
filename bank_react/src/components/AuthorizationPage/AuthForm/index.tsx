@@ -33,7 +33,7 @@ function AuthForm(){
                 <form onSubmit={validateUser}>
                     <input type="text" name="email" required/>
                     <input type="password" name="password" required/>
-                    <button>fsfs</button>
+                    <button>Login</button>
                 </form>
             </fieldset>
             {isLogged ?(

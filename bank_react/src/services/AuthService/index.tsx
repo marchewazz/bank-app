@@ -4,8 +4,11 @@ class AuthService {
     loginUser (data: any){
         return http.put("/accounts/login", data);
     }
-    validatePIN (data: any){
-        return http.post("/accounts/pin", data)
+    validatePINByEmail (data: any){
+        return http.post("/accounts/pinemail", data)
+    }
+    validatePINByAccNumber (data: any){
+        return http.post("/accounts/pinnumber", data)
     }
 }
 
