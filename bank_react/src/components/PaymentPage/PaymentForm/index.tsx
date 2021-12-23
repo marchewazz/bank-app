@@ -13,7 +13,11 @@ function PaymentForm(){
     var ts : TransactionsService = new TransactionsService();
 
     const [isLogged, setisLogged]: any = useState(false);
-    const [bills, setBills]: any[] = useState([])
+    const [bills, setBills]: any[] = useState([]);
+    const [pending, setPending] = useState(false);
+    const [info, setInfo]: any = useState("");
+    const [done, setDone] = useState(false);
+    const [tries, setTries] = useState(3);
 
     function validateUser(){
 
@@ -42,6 +46,7 @@ function PaymentForm(){
     }
 
     function validatePIN(event: any){
+        setPending(true);
         event.preventDefault();
         const data = new FormData(event.target);
 
@@ -51,6 +56,7 @@ function PaymentForm(){
         }
 
         as.validatePINByAccNumber(userData).then((res: any) =>{
+            console.log(res);   
             if (res.data.message === "Logged!"){
                 const transferData = {
                     sender: event.target.bill.value,
@@ -59,9 +65,21 @@ function PaymentForm(){
                     amount: Number(paymentData.get("amount"))
                 }
                 ts.transferMoney(transferData).then((res: any) => {
-                    console.log(res);
+                    if (res.data.message === "Transfer done!"){
+                        setDone(true);
+                    }
+                    setInfo(res.data.message);
                 })
+            } else {
+                setTries(tries - 1);
+                //MAYBE IT'S WEIRD ONE BUT IT'S WORKING
+                if (tries === 1){
+                    setInfo("Too many tries! Try again later!");
+                } else{
+                    setInfo("Wrong PIN!");
+                }
             }
+            setPending(false);
         })
     }
 
@@ -71,29 +89,33 @@ function PaymentForm(){
 
     return (
         <>
-            {paymentData.get("sender") !== "" ?(
-                <p>From account: {paymentData.get("sender")}</p>
-            ) : (
-                <fieldset disabled={isLogged}>
-                    <form onSubmit={validateUser}>
-                        <input type="text" name="email" required/>
-                        <input type="password" name="password" required/>
-                        <button>Login</button>
+            <fieldset disabled={tries === 0 || done}>
+                {paymentData.get("sender") !== "" ?(
+                    <p>From account: {paymentData.get("sender")}</p>
+                ) : (
+                    <fieldset disabled={isLogged}>
+                        <form onSubmit={validateUser}>
+                            <input type="text" name="email" required/>
+                            <input type="password" name="password" required/>
+                            <button>Login</button>
+                        </form>
+                    </fieldset>
+                )}
+                {isLogged ? (
+                    <form onSubmit={validatePIN}>
+                        {renderBillSelect()}
+                        <p>Note: {paymentData.get("note")}</p>
+                        <p>Amount: {paymentData.get("amount")}</p>
+                        <input type="password" name="pin" minLength={4} maxLength={4} required />
+                        <button disabled={pending}>OK</button>
                     </form>
-                </fieldset>
-            )}
-
-            {isLogged ? (
-                <form onSubmit={validatePIN}>
-                    {renderBillSelect()}
-                    <p>Note: {paymentData.get("note")}</p>
-                    <p>Amount: {paymentData.get("amount")}</p>
-                    <input type="password" name="pin" minLength={4} maxLength={4} required />
-                    <button>OK</button>
-                </form>
-            ) : (
-               null 
-            )}
+                ) : (
+                   null 
+                )}
+                <p>
+                    { info }
+                </p>
+            </fieldset>
         </>
     )
 }
