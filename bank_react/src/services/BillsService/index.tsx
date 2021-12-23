@@ -6,6 +6,10 @@ class BillsService{
     getBills(accountData: any){
         return http.post(`${backendUrl}/bills/getall`, accountData)
     }
+
+    getOneBill(billData: any){
+        return http.post(`${backendUrl}/bills/getonebill`, billData)
+    }
 }
 
 export default BillsService;

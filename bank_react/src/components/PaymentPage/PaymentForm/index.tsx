@@ -14,10 +14,11 @@ function PaymentForm(){
 
     const [isLogged, setisLogged]: any = useState(false);
     const [bills, setBills]: any[] = useState([]);
+    const [receiver, setReceiver]: any = useState("");
     const [pending, setPending] = useState(false);
     const [info, setInfo]: any = useState("");
-    const [done, setDone] = useState(false);
-    const [tries, setTries] = useState(3);
+    const [done, setDone]: any = useState(false);
+    const [tries, setTries]: any = useState(3);
 
     function validateUser(){
 
@@ -29,6 +30,12 @@ function PaymentForm(){
                 console.log(res.data.bills);
                 setBills(res.data.bills);
                 setisLogged(true);
+            })
+        }
+        if (paymentData.get("receiver")){
+            bs.getOneBill({"billNumber": paymentData.get("receiver"),}).then((res: any) =>{
+                const receiver = JSON.parse(res.data.bill);
+                setReceiver(`${receiver.billNumber}, ${receiver.billName}`)
             })
         }
     }
@@ -104,6 +111,7 @@ function PaymentForm(){
                 {isLogged ? (
                     <form onSubmit={validatePIN}>
                         {renderBillSelect()}
+                        <p>To: {receiver}</p>
                         <p>Note: {paymentData.get("note")}</p>
                         <p>Amount: {paymentData.get("amount")}</p>
                         <input type="password" name="pin" minLength={4} maxLength={4} required />
