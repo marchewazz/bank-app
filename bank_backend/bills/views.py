@@ -5,7 +5,7 @@ import json
 from pymongo import MongoClient
 from config import mongoUrl
 from random import randint
-
+from bson.json_util import dumps
 
 @csrf_exempt
 def addBill(request):
@@ -77,3 +77,23 @@ def getBills(request):
         print(accountBills)
         return JsonResponse({"bills": accountBills})
 
+
+@csrf_exempt
+def getOneBill(request):
+    billNumber = json.loads(request.body)['billNumber']
+
+    try:
+        client = MongoClient(mongoUrl)
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        db = client['bank']
+        collection = db['accounts']
+
+        accountBills = list(collection.find({"bills.billNumber": billNumber}))[0]['bills']
+
+        for bill in accountBills:
+            if bill["billNumber"] == billNumber: bill = bill
+
+        print(bill)
+        return JsonResponse({"bill": dumps(bill, indent=2)})

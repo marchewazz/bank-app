@@ -78,8 +78,7 @@ def transferMoney(request):
 @csrf_exempt
 def getHistoryByAccount(request):
 
-    #accountNumber = json.loads(request.body)['accountNumber']
-    accountNumber = "313438199320"
+    accountNumber = json.loads(request.body)['accountNumber']
 
     try:
         client = MongoClient(mongoUrl)
