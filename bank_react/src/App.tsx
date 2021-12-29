@@ -12,7 +12,7 @@ function App() {
         <Routes>
           <Route path='/' element={<MainPage/>} />
           <Route path='/authorization' element={<AuthorizationPage/>} />
-          <Route path='/payment' element={<PaymentPage/>} />
+          <Route path='/transaction' element={<PaymentPage/>} />
         </Routes>
       </BrowserRouter>
     </>
