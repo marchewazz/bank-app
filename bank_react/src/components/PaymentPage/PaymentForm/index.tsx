@@ -13,29 +13,56 @@ function PaymentForm(){
     var ts : TransactionsService = new TransactionsService();
 
     const [isLogged, setisLogged]: any = useState(false);
-    const [bills, setBills]: any[] = useState([]);
+
+    const [senderBills, setSenderBills]: any[] = useState([]);
+    const [senderEmail, setSenderEmail]: any = useState("");
+    //POSSIBLE QUERY PARAMS
+    const [querySenderAccount, setQuerySenderAccount]: any = useState("");
+    const [queryReceiverBill, setQueryReceiverBill]: any = useState("");
+    const [queryNote, setQueryNote]: any = useState("");
+    const [queryAmount, setQueryAmount]: any = useState("");
+    //FULL RECEIVER NAME
     const [receiver, setReceiver]: any = useState("");
+    
+
     const [pending, setPending] = useState(false);
     const [info, setInfo]: any = useState("");
     const [done, setDone]: any = useState(false);
     const [tries, setTries]: any = useState(3);
 
-    function validateUser(){
+    function validateUser(event: any){
+        setPending(true);
+        event.preventDefault();
+        const data = new FormData(event.target);
 
+        console.log(data.get('email'));
+        const userData = {
+            accountEmail: data.get('email'),
+            accountPassword: data.get('password'),
+        }
+
+        as.loginUser(userData).then((res: any) => {
+            if (res.data.message === "Valid data!") {
+                setSenderEmail(userData.accountEmail);
+                getBills(JSON.parse(res.data.user)[0].accountNumber, "sender");
+            }
+        })
+        setPending(false);
     }
 
-    function getBills(){
-        if (paymentData.get("sender")){
-            bs.getBills({"accountNumber": paymentData.get("sender"),}).then((res: any) =>{
+    function getBills(data: string, who: string){
+        if (who === "sender"){
+            bs.getBills({"accountNumber": data}).then((res: any) =>{
                 console.log(res.data.bills);
-                setBills(res.data.bills);
+                setSenderBills(res.data.bills);
                 setisLogged(true);
             })
         }
-        if (paymentData.get("receiver")){
-            bs.getOneBill({"billNumber": paymentData.get("receiver"),}).then((res: any) =>{
+        if (who === "receiver"){
+            bs.getOneBill({"billNumber": data}).then((res: any) =>{
                 const receiver = JSON.parse(res.data.bill);
-                setReceiver(`${receiver.billNumber}, ${receiver.billName}`)
+                setReceiver(`${receiver.billNumber}, ${receiver.billName}`);
+                setQueryReceiverBill(`${receiver.billNumber}`);
             })
         }
     }
@@ -44,86 +71,145 @@ function PaymentForm(){
 
         var billsOptions: any[] = [];
 
-        for (var bill of bills){
+        for (var bill of senderBills){
             console.log(bill);
-            billsOptions.push(<option value={bill.billNumber}>{`Bill: ${bill.billNumber}, ${bill.billName}`}</option>);
+            billsOptions.push(<option value={bill.billNumber} selected>{`Bill: ${bill.billNumber}, ${bill.billName}`}</option>);
         }
 
         return <select name="bill">{billsOptions}</select>
     }
 
-    function validatePIN(event: any){
+    function validatePIN(userData: any, method: string): any{
+
+        if (method === "number"){
+            return as.validatePINByAccNumber(userData).then((res: any) => {
+                if (res.data.message === "Logged!") return true
+                return false
+            })
+        } else {
+            return as.validatePINByEmail(userData).then((res: any) => {
+                if (res.data.message === "Logged!") return true
+                return false
+            })
+        }
+    }
+
+    async function makeTransfer(event: any){
         setPending(true);
         event.preventDefault();
-        const data = new FormData(event.target);
 
-        const userData = {
-            accountNumber: paymentData.get("sender"),
-            accountPIN: data.get("pin")
+        const data = new FormData(event.target);
+        var isPINValid: boolean = false;
+        var sender = data.get("bill");
+        var receiver = queryReceiverBill === "" ? data.get("receiver") : queryReceiverBill;
+        var note = queryNote === "" ? data.get("note") : queryNote;
+        var amount = queryAmount === "" ? data.get("amount") : queryAmount;
+    
+        if (senderEmail !== ""){
+            const userData = {
+                accountEmail: senderEmail,
+                accountPIN: data.get("pin")
+            }
+            isPINValid = validatePIN(userData, "email")
+        }
+        if (querySenderAccount !== ""){
+            const userData = {
+                accountNumber: querySenderAccount,
+                accountPIN: data.get("pin")
+            }
+            isPINValid = validatePIN(userData, "number")
         }
 
-        as.validatePINByAccNumber(userData).then((res: any) =>{
-            console.log(res);   
-            if (res.data.message === "Logged!"){
+      if (isPINValid){
                 const transferData = {
-                    sender: event.target.bill.value,
-                    receiver: paymentData.get("receiver"),
-                    note: paymentData.get("note"),
-                    amount: Number(paymentData.get("amount"))
+                    sender: sender,
+                    receiver: receiver,
+                    note: note,
+                    amount: amount
                 }
+                console.log(transferData);
                 ts.transferMoney(transferData).then((res: any) => {
                     if (res.data.message === "Transfer done!"){
                         setDone(true);
                     }
                     setInfo(res.data.message);
                 })
-            } else {
-                setTries(tries - 1);
-                //MAYBE IT'S WEIRD ONE BUT IT'S WORKING
-                if (tries === 1){
-                    setInfo("Too many tries! Try again later!");
-                } else{
-                    setInfo("Wrong PIN!");
-                }
+        } else {
+            setTries(tries - 1);
+            //MAYBE IT'S WEIRD ONE BUT IT'S WORKING
+            if (tries === 1){
+                setInfo("Too many tries! Try again later!");
+            } else{
+                setInfo("Wrong PIN!");
             }
-            setPending(false);
-        })
+        }
+        setPending(false);
     }
 
     useEffect(() => {
-        getBills();
+        if (paymentData.get("sender") != null) {
+            setQuerySenderAccount(paymentData.get("sender"));
+            getBills(paymentData.get("sender"), "sender");
+        }
+        if (paymentData.get("receiver") != null) {
+            getBills(paymentData.get("receiver"), "receiver");
+        }
+        if (paymentData.get("note") != null) setQueryNote(paymentData.get("note"));
+        if (paymentData.get("amount") != null) setQueryAmount(paymentData.get("amount"));
     }, [])
 
     return (
         <>
-            <fieldset disabled={tries === 0 || done}>
-                {paymentData.get("sender") !== "" ?(
-                    <p>From account: {paymentData.get("sender")}</p>
-                ) : (
-                    <fieldset disabled={isLogged}>
-                        <form onSubmit={validateUser}>
-                            <input type="text" name="email" required/>
-                            <input type="password" name="password" required/>
-                            <button>Login</button>
+            <div className="border-2 border-black">
+                <fieldset className="grid grid-rows-3
+                md:grid-cols-3"
+                disabled={tries === 0 || done}>
+                    {paymentData.get("sender") != null ?(
+                        <p>From account: {querySenderAccount}</p>
+                    ) : (
+                        <fieldset disabled={isLogged}>
+                            <form onSubmit={validateUser}>
+                                <input type="text" name="email" placeholder="Pass email" required/>
+                                <input type="password" name="password" placeholder="Pass password" required/>
+                                <button disabled={pending} className="btn-style">Login</button>
+                            </form>
+                        </fieldset>
+                    )}
+                    {isLogged ? (
+                        <form className="md:grid md:col-span-2 md:grid-cols-2" 
+                        onSubmit={makeTransfer}>
+                            <div>
+                                {renderBillSelect()}
+                                {paymentData.get("receiver") !== null ? (
+                                    <p>To: {receiver}</p>
+                                ) : (
+                                    <input type="text" name="receiver" placeholder="Pass receiver" maxLength={12} pattern="(\d{12})$" required/>
+                                )}
+                                {paymentData.get("note") !== null ? (
+                                    <p>Note: {queryNote}</p>
+                                ) : (
+                                    <input type="text" name="note" placeholder="Pass note" />
+                                )}
+                                {paymentData.get("amount") !== null ? (
+                                    <p>Amount: {queryAmount}</p>
+                                ) : (
+                                    <input type="text" name="amount" placeholder="Pass amount" pattern={"^[0-9]+(\.[0-9]{1,2})?$"} required />
+                                )}
+                                
+                            </div>
+                            <div>
+                                <input type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
+                                <button disabled={pending} className="btn-style">OK</button>
+                            </div>
                         </form>
-                    </fieldset>
-                )}
-                {isLogged ? (
-                    <form onSubmit={validatePIN}>
-                        {renderBillSelect()}
-                        <p>To: {receiver}</p>
-                        <p>Note: {paymentData.get("note")}</p>
-                        <p>Amount: {paymentData.get("amount")}</p>
-                        <input type="password" name="pin" minLength={4} maxLength={4} required />
-                        <button disabled={pending}>OK</button>
-                    </form>
-                ) : (
-                   null 
-                )}
-                <p>
-                    { info }
-                </p>
-            </fieldset>
+                    ) : (
+                       null 
+                    )}
+                    <p>
+                        { info }
+                    </p>
+                </fieldset>
+            </div>
         </>
     )
 }

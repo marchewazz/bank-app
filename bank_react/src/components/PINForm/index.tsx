@@ -21,8 +21,8 @@ function PINForm(props: any){
     }
     return(
         <form onSubmit={validatePIN}>
-            <input type="password" name="pin" minLength={4} maxLength={4} required />
-            <button>OK</button>
+            <input type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
+            <button className="btn-style">OK</button>
         </form>
     )
 }

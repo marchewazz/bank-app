@@ -9,7 +9,7 @@ function AuthForm(){
     var as : AuthService = new AuthService();
     
     const [email, setEmail] = useState("");
-    const [isLogged, setIsLoaded] = useState(false);
+    const [isLogged, setIsLogged] = useState(false);
 
     function validateUser(event: any){
         event.preventDefault();
@@ -23,7 +23,7 @@ function AuthForm(){
         as.loginUser(userData).then((res: any) => {
             if(res.data.message === "Valid data!"){
                 if (userData.accountEmail != null) setEmail(`${userData.accountEmail}`);
-                setIsLoaded(true);
+                setIsLogged(true);
             }
         })
     }
@@ -31,9 +31,9 @@ function AuthForm(){
         <>
             <fieldset disabled={isLogged}>
                 <form onSubmit={validateUser}>
-                    <input type="text" name="email" required/>
-                    <input type="password" name="password" required/>
-                    <button>Login</button>
+                    <input type="text" name="email" placeholder="Pass email" required/>
+                    <input type="password" name="password" placeholder="Pass password" required/>
+                    <button className="btn-style">Login</button>
                 </form>
             </fieldset>
             {isLogged ?(
