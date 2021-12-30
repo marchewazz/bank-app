@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from passlib.hash import django_pbkdf2_sha256 as hasher
 
 from pymongo import MongoClient
@@ -49,6 +49,7 @@ def register(request):
                     client.close()
                     return JsonResponse({"message": "Query problem!"})
                 else:
+                    # CREATE ONE BILL WITH NEW ACCOUNT
                     r = requests.put(f"http://127.0.0.1:8000/bills/add", data=json.dumps({
                         "accountNumber": randomAccNumber,
                         "billName": "Main bill"

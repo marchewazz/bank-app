@@ -1,5 +1,3 @@
-import shelve
-
 from kivy.app import App
 from kivy.lang.builder import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -10,14 +8,22 @@ import re
 from classes import User
 from config import bankCurrency, backendUrl
 
-#some functions
 
-
+# SOME FUNCTIONS
 def updateUserData():
-    response = requests.get(f'{backendUrl}/accounts/refresh', data=json.dumps({"accountNumber": BankApp.LoggedUser.accountNumber}))
+    # FUNCTION UPDATES USER BILLS ETC.
+    response = requests.get(f'{backendUrl}/accounts/refresh',
+                            data=json.dumps({"accountNumber": BankApp.LoggedUser.accountNumber}))
     userData = json.loads(response.json()['user'])[0]
     BankApp.LoggedUser = User(userData)
-# app classes
+
+
+# APP CLASSES
+"""
+    CLEARSCREEN - function clears all labels on screen load to make sure there is no old informations
+    LOADINGLABEL - sets information label as "Loading..." to show user something is working
+    SETINFO - sets information label to anything
+"""
 
 
 class RegisterScreen(Screen):
@@ -48,6 +54,7 @@ class RegisterScreen(Screen):
         accountPass = self.ids.accPassword.text
         accountPIN = self.ids.accPIN.text
         if accountName and accountEmail and accountPass and accountPIN:
+            # IF EVERYTHING IS PASSED WE CAN GO AND CHECK REGEX FOR DATA
             wrongPINs = ["1234", "4321", "2137"]
             if not (re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', accountEmail)):
                 self.settingInfoLabel("Invalid email!")
@@ -64,6 +71,7 @@ class RegisterScreen(Screen):
             elif accountPIN in wrongPINs:
                 self.settingInfoLabel("This PIN is too easy, pass different")
             else:
+                # IF ALL REGEXES ARE GOOD WE ARE MAKING REQUEST
                 try:
                     response = requests.post(
                         f'{backendUrl}/accounts/register',
@@ -77,6 +85,7 @@ class RegisterScreen(Screen):
                 else:
                     response = json.loads(response.text)["message"]
                     if response == "Added!":
+                        # IF USER IS REGISTERED REDIRECT TO LOGIN SCREEN
                         self.clearScreen()
                         self.manager.current = "LoginScreen"
                         self.manager.get_screen("LoginScreen").ids.information.text = "Account Created!"
@@ -104,6 +113,7 @@ class LoginScreen(Screen):
         accountEmail = self.ids.accEmail.text
         accountPass = self.ids.accPassword.text
         if accountEmail and accountPass:
+            # IF EVERYTHING IS PASSED WE CAN GO AND CHECK REGEX FOR DATA
             if not (re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', accountEmail)):
                 self.settingInfoLabel("Invalid email!")
             elif len(accountPass) < 8:
@@ -112,6 +122,7 @@ class LoginScreen(Screen):
                 self.settingInfoLabel("Too long password!")
             else:
                 try:
+                    # REQUEST FOR LOGIN
                     r = requests.get(f'{backendUrl}/accounts/login', data=json.dumps({
                         "accountEmail": accountEmail,
                         "accountPassword": accountPass}))
@@ -120,6 +131,7 @@ class LoginScreen(Screen):
                     self.settingInfoLabel("Server issue!")
                 else:
                     if response['message'] == "Valid data!":
+                        # IF EVERYTHING IS CORRECT WE CAN GO TO PASSING PIN
                         self.manager.current = 'ValidatingPINScreen'
                     else:
                         self.settingInfoLabel(response['message'])
@@ -128,13 +140,14 @@ class LoginScreen(Screen):
 
 
 class ValidatingPINScreen(Screen):
-
     tries = 0
+
     def clearScreen(self):
         self.ids.accPIN.text = ""
         self.ids.information.text = ""
 
     def validatePIN(self):
+        # PIN CANNOT BE LONGER THAN 4 DIGITS
         if (len(self.ids.accPIN.text) > 4):
             self.ids.accPIN.text = self.ids.accPIN.text[:-1]
 
@@ -144,7 +157,7 @@ class ValidatingPINScreen(Screen):
         if len(accountPIN) != 4:
             self.ids.information.text = "PIN must be 4 digits long!"
         else:
-            r = requests.get(f"{backendUrl}/accounts/pin", data=json.dumps({
+            r = requests.get(f"{backendUrl}/accounts/pinemail", data=json.dumps({
                 "accountPIN": str(accountPIN),
                 "accountEmail": accountEmail
             }))
@@ -161,9 +174,12 @@ class ValidatingPINScreen(Screen):
                     self.manager.current = 'LoginScreen'
                 else:
                     self.ids.information.text = response['message']
+
+
 class MainScreen(Screen):
 
     def createBillsChoice(self, bills):
+        # CREATING DROPDOWN MENU WITH AVAIABLE BILLS
         def formatBill(bill):
             return f"Bill: {bill['billNumber']}, name: {bill['billName']}, balance: {str(bill['billBalance']) + bankCurrency}"
 
@@ -210,9 +226,11 @@ class AddingBillScreen(Screen):
             else:
                 print(r)
                 self.settingInfoLabel(r.json()['message'])
+
     def createData(self):
         self.ids.information.text = ""
         updateUserData()
+
 
 class MakingTransferScreen(Screen):
 
@@ -256,7 +274,7 @@ class MakingTransferScreen(Screen):
             self.ids.favoriteBills.values = self.createFavoriteBillsChoice(BankApp.LoggedUser.favoritesBills)
 
     def chooseOption(self):
-        print(self.ids.optionFavorites.state)
+        # BASED ON RADIO BUTTONS DIFFRENT WAYS TO PASS RECEIVER IS BEING SHOWN
         if self.ids.optionFavorites.state == 'down':
             self.ids.billNumber.opacity = 0
             self.ids.favoriteBills.opacity = 1
@@ -265,7 +283,7 @@ class MakingTransferScreen(Screen):
             self.ids.favoriteBills.opacity = 0
 
     def validateAmount(self):
-
+        # VALIDATING AMOUNT EG. ONLY ONE DOT OR ONLY TWO DIGITS AFTER DOT
         amount = self.ids.amount.text
         if amount:
             if "." in amount:
@@ -280,6 +298,7 @@ class MakingTransferScreen(Screen):
                 if len(amount) > 1:
                     if amount[1] != "0" and amount[1] != ".":
                         self.ids.amount.text = self.ids.amount.text[1:]
+
     def makeTransfer(self):
         self.loadingLabel()
 
@@ -287,6 +306,7 @@ class MakingTransferScreen(Screen):
             self.settingInfoLabel("Select sender")
             return
         else:
+            # GETTING BILL NUMBER
             senderNumber = re.search('Bill: (.+?), ', self.ids.selectBill.text).group(1)
 
         if self.ids.optionFavorites.state == 'down':
@@ -295,9 +315,11 @@ class MakingTransferScreen(Screen):
                 self.settingInfoLabel("Select receiver")
                 return
             else:
+                # GETTING BILL NUMBER
                 receiverNumber = re.search('Bill: (.+?), ', self.ids.favoriteBills.text).group(1)
 
         if self.ids.optionNumber.state == 'down':
+            # CHECK IF PASSED NUMBER IS 12 DIGITS LONG
             if bool(re.match(r"(\d{12})$", self.ids.billNumber.text)):
                 receiverNumber = self.ids.billNumber.text
             else:

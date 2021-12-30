@@ -7,7 +7,7 @@ WindowManager:
     MainScreen:
     AddingBillScreen:
     MakingTransferScreen:
-
+    
 <RegisterScreen>:
     name: "RegisterScreen"
 
@@ -46,12 +46,16 @@ WindowManager:
             cols: 2
             Button:
                 text: "Register"
+                background_normal: ''
+                background_color: 1, 0, 0, 1
                 on_press:
                     root.loadingLabel()
                 on_release:
                     root.register()
             Button:
                 text: "I have an account. Login"
+                background_normal: ''
+                background_color: 1, 0, 0, 1
                 on_release:
                     app.root.current = "LoginScreen"
 

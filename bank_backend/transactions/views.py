@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from pymongo import MongoClient, ReturnDocument
+from pymongo import MongoClient
 from config import mongoUrl
 import json
 from bson.json_util import dumps
@@ -41,8 +41,8 @@ def transferMoney(request):
                                 "billNumber": transferData['sender']
                             }
                         }}
-                    accountsCol.update_one({"bills.billNumber": transferData['sender']}, {"$inc": {"bills.$.billBalance": -transferData['amount']}}, session=session)
-                    accountsCol.update_one({"bills.billNumber": transferData['receiver']}, {"$inc": {"bills.$.billBalance": transferData['amount']}}, session=session)
+                    accountsCol.update_one({"bills.billNumber": transferData['sender']}, {"$inc": {"bills.$.billBalance": -float(transferData['amount'])}}, session=session)
+                    accountsCol.update_one({"bills.billNumber": transferData['receiver']}, {"$inc": {"bills.$.billBalance": float(transferData['amount'])}}, session=session)
 
                     updatedSenderUser = list(accountsCol.find({
                         "bills": {
@@ -95,7 +95,7 @@ def getHistoryByAccount(request):
 
         print(history)
 
-        return JsonResponse({"message": "x"})
+        return JsonResponse({"transactions": dumps(history, indent=2)})
 
 @csrf_exempt
 def getHistoryByBill(request):
@@ -116,4 +116,4 @@ def getHistoryByBill(request):
 
         print(history)
 
-        return JsonResponse({"bills": dumps(history, indent=2)})
+        return JsonResponse({"transactions": dumps(history, indent=2)})

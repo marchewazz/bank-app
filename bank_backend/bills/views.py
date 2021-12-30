@@ -48,12 +48,11 @@ def addBill(request):
             try:
                 collection.update(
                     {"accountNumber": data['accountNumber']},
-                    { "$push": { "bills" : {
+                    {"$push": {"bills": {
                             "billNumber": billNumber,
                             "billName": billName,
                             "billBalance": 0.00
-                        }}
-                    }
+                    }}}
                 )
             except ConnectionError:
                 client.close()
@@ -95,5 +94,4 @@ def getOneBill(request):
         for bill in accountBills:
             if bill["billNumber"] == billNumber: bill = bill
 
-        print(bill)
         return JsonResponse({"bill": dumps(bill, indent=2)})
