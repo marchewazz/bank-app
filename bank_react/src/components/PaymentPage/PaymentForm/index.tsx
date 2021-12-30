@@ -51,6 +51,8 @@ function PaymentForm(){
     }
 
     function getBills(data: string, who: string){
+        //GET BILLS FOR SENDER TO CHOOSE
+        //OR GET FULL BILL NAME FOR QUERY RECEIVER
         if (who === "sender"){
             bs.getBills({"accountNumber": data}).then((res: any) =>{
                 console.log(res.data.bills);
@@ -60,15 +62,15 @@ function PaymentForm(){
         }
         if (who === "receiver"){
             bs.getOneBill({"billNumber": data}).then((res: any) =>{
-                const receiver = JSON.parse(res.data.bill);
-                setReceiver(`${receiver.billNumber}, ${receiver.billName}`);
-                setQueryReceiverBill(`${receiver.billNumber}`);
+                const bill = JSON.parse(res.data.bill);
+                setReceiver(`${bill.billNumber}, ${bill.billName}`);
+                setQueryReceiverBill(`${bill.billNumber}`);
             })
         }
     }
 
     function renderBillSelect(){
-
+        //RENDERS SELECT FOR BILLS
         var billsOptions: any[] = [];
 
         for (var bill of senderBills){
@@ -80,7 +82,9 @@ function PaymentForm(){
     }
 
     function validatePIN(userData: any, method: string): any{
-
+        //BASED ON WHAT IS PASSED PIN IS CHECKED WITH DIFFRENT DATA
+        //FOR NOW IF SENDER IS PASSED IT'S CHECKED ON NUMBER ACCOUNT
+        //AND IF THERE WAS A LOGIN IT'S CHECKED WITH EMAIL
         if (method === "number"){
             return as.validatePINByAccNumber(userData).then((res: any) => {
                 if (res.data.message === "Logged!") return true
@@ -101,10 +105,12 @@ function PaymentForm(){
         const data = new FormData(event.target);
         var isPINValid: boolean = false;
         var sender = data.get("bill");
+        //LOCAL VARIABLES BASED ON FORM OR STATE WITH QUERY PARAMS
         var receiver = queryReceiverBill === "" ? data.get("receiver") : queryReceiverBill;
         var note = queryNote === "" ? data.get("note") : queryNote;
         var amount = queryAmount === "" ? data.get("amount") : queryAmount;
-    
+        
+        //PIN VALIDATION
         if (senderEmail !== ""){
             const userData = {
                 accountEmail: senderEmail,
@@ -119,21 +125,21 @@ function PaymentForm(){
             }
             isPINValid = validatePIN(userData, "number")
         }
-
-      if (isPINValid){
-                const transferData = {
-                    sender: sender,
-                    receiver: receiver,
-                    note: note,
-                    amount: amount
+        //IF PIN VALID THERE IS CALL FOR TRANSFER
+        if (isPINValid){
+            const transferData = {
+                sender: sender,
+                receiver: receiver,
+                note: note,
+                amount: amount
+            }
+            console.log(transferData);
+            ts.transferMoney(transferData).then((res: any) => {
+                if (res.data.message === "Transfer done!"){
+                    setDone(true);
                 }
-                console.log(transferData);
-                ts.transferMoney(transferData).then((res: any) => {
-                    if (res.data.message === "Transfer done!"){
-                        setDone(true);
-                    }
-                    setInfo(res.data.message);
-                })
+                setInfo(res.data.message);
+            })
         } else {
             setTries(tries - 1);
             //MAYBE IT'S WEIRD ONE BUT IT'S WORKING
@@ -147,6 +153,7 @@ function PaymentForm(){
     }
 
     useEffect(() => {
+        //SET STATES IF ANY QUERY PARAMS ARE PASSED
         if (paymentData.get("sender") != null) {
             setQuerySenderAccount(paymentData.get("sender"));
             getBills(paymentData.get("sender"), "sender");
@@ -164,7 +171,7 @@ function PaymentForm(){
                 <fieldset className="grid grid-rows-3
                 md:grid-cols-3"
                 disabled={tries === 0 || done}>
-                    {paymentData.get("sender") != null ?(
+                    {querySenderAccount != "" ?(
                         <p>From account: {querySenderAccount}</p>
                     ) : (
                         <fieldset disabled={isLogged}>
@@ -180,17 +187,17 @@ function PaymentForm(){
                         onSubmit={makeTransfer}>
                             <div>
                                 {renderBillSelect()}
-                                {paymentData.get("receiver") !== null ? (
+                                {queryReceiverBill !== "" ? (
                                     <p>To: {receiver}</p>
                                 ) : (
                                     <input type="text" name="receiver" placeholder="Pass receiver" maxLength={12} pattern="(\d{12})$" required/>
                                 )}
-                                {paymentData.get("note") !== null ? (
+                                {queryAmount !== "" ? (
                                     <p>Note: {queryNote}</p>
                                 ) : (
                                     <input type="text" name="note" placeholder="Pass note" />
                                 )}
-                                {paymentData.get("amount") !== null ? (
+                                {queryAmount !== "" ? (
                                     <p>Amount: {queryAmount}</p>
                                 ) : (
                                     <input type="text" name="amount" placeholder="Pass amount" pattern={"^[0-9]+(\.[0-9]{1,2})?$"} required />
