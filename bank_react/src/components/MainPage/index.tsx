@@ -1,9 +1,15 @@
 import React from "react";
+
 import MainHeader from "./MainHeader";
+import NavBar from "../NavBar";
 
 function MainPage(){
     return (
-        <MainHeader />
+        <>  
+            <NavBar />
+            <MainHeader />
+        </>
+        
     )
 }
 
