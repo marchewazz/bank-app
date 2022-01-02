@@ -5,6 +5,7 @@ import MainPage from './components/MainPage';
 import AuthorizationPage from './components/AuthorizationPage';
 import PaymentPage from './components/PaymentPage';
 import RegisterPage from './components/RegisterPage';
+import LoginPage from './components/LoginPage';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path='/authorization' element={<AuthorizationPage/>} />
           <Route path='/transaction' element={<PaymentPage/>} />
           <Route path='/register' element={<RegisterPage/>} />
+          <Route path='/login' element={<LoginPage/>} />
         </Routes>
       </BrowserRouter>
     </>
