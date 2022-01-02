@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import AuthService from "../../services/AuthService";
 
 export default function NavBar(){
 
     var as: AuthService = new AuthService();
+    var navigate = useNavigate();
     const [isLogged, setIsLogged] = useState(false);
+
+    function logout(){
+        as.logoutUser()
+        navigate("/")
+    }
 
     useEffect(() => {
         if (as.isUserLogged()) setIsLogged(true);
-    }, [])
+        if (!as.isUserLogged()) setIsLogged(false);
+    }, [as])
 
     return (
         <div>
@@ -22,13 +29,10 @@ export default function NavBar(){
                 </>
             ) : (
                 <>
-                    <Link to="/profile">Hello {JSON.parse(JSON.parse(as.getUserDetails())).accountUser.firstName}! </Link> |{" "}
-                    <button>Logout</button>
+                    <Link to="/profile" className="underline">Hello!</Link> |{" "}
+                    <button onClick={logout}>Logout</button>
                 </>
             )}
-            
-               
-            
         </div>
     )
 }

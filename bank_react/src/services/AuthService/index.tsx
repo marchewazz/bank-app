@@ -14,21 +14,25 @@ class AuthService {
         return localStorage.getItem('userData');
       }
     
-      setUserDetails(userData: any) : void {
-        localStorage.setItem('userData', JSON.stringify(userData))
-      }
+    setUserDetails(userData: any) : void {
+      localStorage.setItem('userData', JSON.stringify(userData))
+    }
+  
+    isUserLogged(): boolean {
+      return this.getUserDetails() != null ? true : false;
+    }
     
-      isUserLogged(): boolean {
-        return this.getUserDetails() != null ? true : false;
-      }
-    
-      setDataInLocalStorage(variableName: string, data: any) {
-        localStorage.setItem(variableName, data);
-      }
-    
-      clearStorage() {
-        localStorage.clear();
-      }
+    logoutUser(): void{
+      this.clearStorage();
+    }
+
+    setDataInLocalStorage(variableName: string, data: any) {
+      localStorage.setItem(variableName, data);
+    }
+  
+    clearStorage() {
+      localStorage.clear();
+    }
 }
 
 export default AuthService;
