@@ -10,6 +10,7 @@ import AuthorizationPage from './components/AuthorizationPage';
 import PaymentPage from './components/PaymentPage';
 import RegisterPage from './components/RegisterPage';
 import LoginPage from './components/LoginPage';
+import ProfilePage from './components/ProfilePage';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -20,6 +21,7 @@ ReactDOM.render(
         <Route path='transaction' element={<PaymentPage/>} />
         <Route path='register' element={<RegisterPage/>} />
         <Route path='login' element={<LoginPage/>} />
+        <Route path="profile" element={<ProfilePage/>} />
       </Route>
     </Routes>
   </BrowserRouter>,
