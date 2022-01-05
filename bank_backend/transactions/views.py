@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -56,6 +58,7 @@ def transferMoney(request):
                         if x['billNumber'] == transferData['sender']:
                             amount = x['billBalance']
                     if amount > 0:
+                        now = datetime.now()
                         transactionCol.insert_one({
                             "sender": {
                                 "account": updatedSenderUser['accountNumber'],
@@ -66,7 +69,8 @@ def transferMoney(request):
                                 "bill": transferData['receiver']
                             },
                             "amount": transferData['amount'],
-                            "note": transferData['note']
+                            "note": transferData['note'],
+                            "date": now
                         }, session=session)
                         session.commit_transaction()
                         return JsonResponse({"message": "Transfer done!"})
