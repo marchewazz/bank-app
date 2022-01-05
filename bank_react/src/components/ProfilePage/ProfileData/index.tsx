@@ -27,6 +27,7 @@ export default function ProfileData(){
 
         for (var transaction of accountHistory){
             history.push(<div>
+                <p>Date: {new Date(transaction.date.$date).toUTCString()}</p>
                 <p>From: {transaction.sender.bill}</p>
                 <p>To: {transaction.receiver.bill}</p>
                 <p>Note: {transaction.note}</p>
