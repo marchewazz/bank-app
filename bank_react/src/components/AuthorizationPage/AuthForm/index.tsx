@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 
 import AuthService from "../../../services/AuthService";
+import { useQuery } from "../../../utilities";
 
 function AuthForm(){
 
     var as : AuthService = new AuthService();
-    
+    const queryParams: any = useQuery();
+
     const [email, setEmail] = useState("");
     const [isLogged, setIsLogged] = useState(false);
 
@@ -27,6 +29,7 @@ function AuthForm(){
     }
 
     function validatePIN(event: any){
+        console.log(queryParams.get("return"));
         event.preventDefault();
         const data = new FormData(event.target);
         const userData = {
@@ -35,7 +38,7 @@ function AuthForm(){
         }
         as.validatePINByEmail(userData).then((res: any) => {
             if(res.data.message === "Logged!") {
-                window.location.href = `http://localhost:4200/confirmedauth/?accountnumber=${JSON.parse(res.data.user).accountNumber}`;
+                window.location.href = `${queryParams.get("return")}?accountnumber=${JSON.parse(res.data.user).accountNumber}`;
             }
         })
     }
