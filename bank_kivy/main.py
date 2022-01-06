@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from kivy.app import App
 from kivy.lang.builder import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -178,28 +180,22 @@ class ValidatingPINScreen(Screen):
 
 class MainScreen(Screen):
 
-    def createBillsChoice(self, bills):
-        # CREATING DROPDOWN MENU WITH AVAIABLE BILLS
-        def formatBill(bill):
-            return f"Bill: {bill['billNumber']}, name: {bill['billName']}, balance: {str(bill['billBalance']) + bankCurrency}"
-
-        billsArray = []
-        for bill in bills:
-            billsArray.append(formatBill(bill))
-        return billsArray
-
     def createData(self):
         updateUserData()
         self.ids.mainWelcome.text = f"Welcome, {BankApp.LoggedUser.accountUser['firstName']}!"
-        if not BankApp.LoggedUser.bills:
-            self.ids.selectedBill.text = "No bills available"
-        else:
-            self.ids.selectedBill.values \
-                = self.createBillsChoice(BankApp.LoggedUser.bills)
 
     def logout(self):
         BankApp.LoggedUser.delete()
         self.manager.current = 'LoginScreen'
+
+
+class ProfileScreen(Screen):
+    def createData(self):
+        updateUserData()
+        user = BankApp.LoggedUser
+        self.ids.accountName.text = f"{user.accountUser['firstName']} {user.accountUser['lastName']}"
+        self.ids.accountEmail.text = user.accountEmail
+        self.ids.accountNumber.text = user.accountNumber
 
 
 class AddingBillScreen(Screen):

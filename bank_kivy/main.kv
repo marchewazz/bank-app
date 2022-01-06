@@ -5,9 +5,10 @@ WindowManager:
     LoginScreen:
     ValidatingPINScreen:
     MainScreen:
+    ProfileScreen:
     AddingBillScreen:
     MakingTransferScreen:
-    
+
 <RegisterScreen>:
     name: "RegisterScreen"
 
@@ -133,9 +134,10 @@ WindowManager:
         rows: 3
         GridLayout:
             cols: 2
-            Spinner:
-                id: selectedBill
-                text: "Select a bill"
+            Button:
+                text: "My account"
+                on_release:
+                    app.root.current = "ProfileScreen"
             Button:
                 text: "Logout"
                 on_release:
@@ -152,6 +154,27 @@ WindowManager:
                 text: "Make a transfer"
                 on_release:
                     app.root.current = "MakingTransferScreen"
+
+<ProfileScreen>:
+    name: "ProfileScreen"
+
+    on_pre_enter:
+        root.createData()
+
+    GridLayout:
+        rows: 2
+        GridLayout:
+            rows: 3
+            Label:
+                id: accountName
+            Label:
+                id: accountEmail
+            Label:
+                id: accountNumber
+        Button:
+            text: "Back"
+            on_release:
+                app.root.current = "MainScreen"
 
 <AddingBillScreen>:
     name: "AddingBillScreen"
