@@ -6,6 +6,7 @@ WindowManager:
     ValidatingPINScreen:
     MainScreen:
     ProfileScreen:
+    HistoryScreen:
     AddingBillScreen:
     MakingTransferScreen:
 
@@ -147,10 +148,6 @@ WindowManager:
         GridLayout:
             cols: 4
             Button:
-                text: "Create new bill"
-                on_release:
-                    app.root.current = "AddingBillScreen"
-            Button:
                 text: "Make a transfer"
                 on_release:
                     app.root.current = "MakingTransferScreen"
@@ -164,13 +161,48 @@ WindowManager:
     GridLayout:
         rows: 2
         GridLayout:
-            rows: 3
-            Label:
-                id: accountName
-            Label:
-                id: accountEmail
-            Label:
-                id: accountNumber
+            cols: 2
+            Button:
+                text: "Bills and history"
+                on_release:
+                    app.root.current = "HistoryScreen"
+            GridLayout:
+                rows: 3
+                Label:
+                    id: accountName
+                Label:
+                    id: accountEmail
+                Label:
+                    id: accountNumber
+        Button:
+            text: "Back"
+            on_release:
+                app.root.current = "MainScreen"
+
+<HistoryScreen>:
+    name: "HistoryScreen"
+
+    on_pre_enter:
+        root.createData()
+
+    GridLayout:
+        rows: 2
+        GridLayout:
+            cols: 2
+            ScrollView:
+                GridLayout:
+                    id: historyLayout
+                    size_hint_y: None
+                    height: self.minimum_height
+                    row_default_height: 60
+                    spacing: 0, 50
+                    cols: 1
+            GridLayout:
+                rows: 2
+                Button:
+                    text: "Create new bill"
+                    on_release:
+                        app.root.current = "AddingBillScreen"
         Button:
             text: "Back"
             on_release:

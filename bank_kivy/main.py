@@ -1,7 +1,8 @@
-from datetime import datetime
-
+import kivy
 from kivy.app import App
 from kivy.lang.builder import Builder
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 import requests
@@ -10,6 +11,7 @@ import re
 from classes import User
 from config import bankCurrency, backendUrl
 
+kivy.require("2.0.0")
 
 # SOME FUNCTIONS
 def updateUserData():
@@ -193,10 +195,31 @@ class ProfileScreen(Screen):
     def createData(self):
         updateUserData()
         user = BankApp.LoggedUser
-        self.ids.accountName.text = f"{user.accountUser['firstName']} {user.accountUser['lastName']}"
-        self.ids.accountEmail.text = user.accountEmail
-        self.ids.accountNumber.text = user.accountNumber
+        self.ids.accountName.text = f"Name: {user.accountUser['firstName']} {user.accountUser['lastName']}"
+        self.ids.accountEmail.text = f"Email: {user.accountEmail}"
+        self.ids.accountNumber.text = f"Number: {user.accountNumber}"
 
+
+class HistoryScreen(Screen):
+    def createData(self):
+        updateUserData()
+        self.ids.historyLayout.clear_widgets()
+        try:
+            # REQUEST FOR LOGIN
+            r = requests.get(f'{backendUrl}/transaction/historyaccount', data=json.dumps({
+                "accountNumber": BankApp.LoggedUser.accountNumber}))
+            transactions = json.loads(r.json()['transactions'])
+        except:
+            self.manager.current = 'MainScreen'
+        else:
+            for transaction in transactions:
+                print(transaction)
+                layout = BoxLayout(orientation='vertical')
+                layout.add_widget(Label(text=f"From: bill: {transaction['sender']['bill']}, account: {transaction['sender']['account']}"))
+                layout.add_widget(Label(text=f"To: bill: {transaction['receiver']['bill']}, account: {transaction['receiver']['account']}"))
+                layout.add_widget(Label(text=f"Note: {transaction['note']}"))
+                layout.add_widget(Label(text=f"Amount: {transaction['amount']}{bankCurrency}"))
+                self.ids.historyLayout.add_widget(layout)
 
 class AddingBillScreen(Screen):
 
@@ -350,4 +373,5 @@ class BankApp(App):
 
 
 if __name__ == "__main__":
+    print(kivy.__version__)
     BankApp().run()
