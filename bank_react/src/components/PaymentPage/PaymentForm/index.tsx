@@ -16,11 +16,11 @@ function PaymentForm(){
 
     const [senderBills, setSenderBills]: any[] = useState([]);
     const [senderEmail, setSenderEmail]: any = useState("");
-    //POSSIBLE QUERY PARAMS
-    const [querySenderAccount, setQuerySenderAccount]: any = useState("");
-    const [queryReceiverBill, setQueryReceiverBill]: any = useState("");
-    const [queryNote, setQueryNote]: any = useState("");
-    const [queryAmount, setQueryAmount]: any = useState("");
+    //POSSIBLE PREDEFINED PARAMS
+    const [predefinedSenderAccount, setPredefinedSenderAccount]: any = useState("");
+    const [predefinedReceiverBill, setPredefinedReceiverBill]: any = useState("");
+    const [predefinedNote, setPredefinedNote]: any = useState("");
+    const [predefinedAmount, setPredefinedAmount]: any = useState("");
     //FULL RECEIVER NAME
     const [receiver, setReceiver]: any = useState("");
     
@@ -28,6 +28,7 @@ function PaymentForm(){
     const [pending, setPending] = useState(false);
     const [info, setInfo]: any = useState("");
     const [done, setDone]: any = useState(false);
+    const [passReceiverOption, setPassReceiverOption] = useState("favorites");
     const [tries, setTries]: any = useState(3);
 
     function validateUser(event: any){
@@ -52,7 +53,7 @@ function PaymentForm(){
 
     function getBills(data: string, who: string){
         //GET BILLS FOR SENDER TO CHOOSE
-        //OR GET FULL BILL NAME FOR QUERY RECEIVER
+        //OR GET FULL BILL NAME FOR PREDEFINED RECEIVER
         if (who === "sender"){
             bs.getBills({"accountNumber": data}).then((res: any) =>{
                 console.log(res.data.bills);
@@ -64,7 +65,7 @@ function PaymentForm(){
             bs.getOneBill({"billNumber": data}).then((res: any) =>{
                 const bill = JSON.parse(res.data.bill);
                 setReceiver(`${bill.billNumber}, ${bill.billName}`);
-                setQueryReceiverBill(`${bill.billNumber}`);
+                setPredefinedReceiverBill(`${bill.billNumber}`);
             })
         }
     }
@@ -74,6 +75,21 @@ function PaymentForm(){
         var billsOptions: any[] = [];
 
         for (var bill of senderBills){
+            console.log(bill);
+            billsOptions.push(<option value={bill.billNumber} selected>{`Bill: ${bill.billNumber}, ${bill.billName}`}</option>);
+        }
+
+        return <select name="bill">{billsOptions}</select>
+    }
+
+    function renderFavoritesBillSelect(){
+        //RENDERS SELECT FOR BILLS
+        var billsOptions: any[] = [];
+        const exampleBills: any[] = [
+            {"billNumber": "222222", "billName": "bill1"},
+            {"billNumber": "222233", "billName": "bill2"},
+        ]
+        for (var bill of exampleBills){
             console.log(bill);
             billsOptions.push(<option value={bill.billNumber} selected>{`Bill: ${bill.billNumber}, ${bill.billName}`}</option>);
         }
@@ -105,10 +121,10 @@ function PaymentForm(){
         const data = new FormData(event.target);
         var isPINValid: boolean = false;
         var sender = data.get("bill");
-        //LOCAL VARIABLES BASED ON FORM OR STATE WITH QUERY PARAMS
-        var receiver = queryReceiverBill === "" ? data.get("receiver") : queryReceiverBill;
-        var note = queryNote === "" ? data.get("note") : queryNote;
-        var amount = queryAmount === "" ? data.get("amount") : queryAmount;
+        //LOCAL VARIABLES BASED ON FORM OR STATE WITH PREDEFINED PARAMS
+        var receiver = predefinedReceiverBill === "" ? data.get("receiver") : predefinedReceiverBill;
+        var note = predefinedNote === "" ? data.get("note") : predefinedNote;
+        var amount = predefinedAmount === "" ? data.get("amount") : predefinedAmount;
         
         //PIN VALIDATION
         if (senderEmail !== ""){
@@ -118,9 +134,9 @@ function PaymentForm(){
             }
             isPINValid = validatePIN(userData, "email")
         }
-        if (querySenderAccount !== ""){
+        if (predefinedSenderAccount !== ""){
             const userData = {
-                accountNumber: querySenderAccount,
+                accountNumber: predefinedSenderAccount,
                 accountPIN: data.get("pin")
             }
             isPINValid = validatePIN(userData, "number")
@@ -153,16 +169,22 @@ function PaymentForm(){
     }
 
     useEffect(() => {
-        //SET STATES IF ANY QUERY PARAMS ARE PASSED
+        //SET STATES IF ANY PREDEFINED PARAMS ARE PASSED
         if (paymentData.get("sender") != null) {
-            setQuerySenderAccount(paymentData.get("sender"));
+            setPredefinedSenderAccount(paymentData.get("sender"));
             getBills(paymentData.get("sender"), "sender");
+            if (as.isUserLogged()){
+                if (JSON.parse(JSON.parse(as.getUserDetails())).accountNumber != paymentData.get("sender")) as.logoutUser()
+            }
+        } else if (as.isUserLogged()){
+            setPredefinedSenderAccount(JSON.parse(JSON.parse(as.getUserDetails())).accountNumber);
+            getBills(JSON.parse(JSON.parse(as.getUserDetails())).accountNumber, "sender");
         }
         if (paymentData.get("receiver") != null) {
             getBills(paymentData.get("receiver"), "receiver");
         }
-        if (paymentData.get("note") != null) setQueryNote(paymentData.get("note"));
-        if (paymentData.get("amount") != null) setQueryAmount(paymentData.get("amount"));
+        if (paymentData.get("note") != null) setPredefinedNote(paymentData.get("note"));
+        if (paymentData.get("amount") != null) setPredefinedAmount(paymentData.get("amount"));
     }, [])
 
     return (
@@ -171,8 +193,8 @@ function PaymentForm(){
                 <fieldset className="grid grid-rows-3
                 md:grid-cols-3"
                 disabled={tries === 0 || done}>
-                    {querySenderAccount != "" ?(
-                        <p>From account: {querySenderAccount}</p>
+                    {predefinedSenderAccount != "" ?(
+                        <p>From account: {predefinedSenderAccount}</p>
                     ) : (
                         <fieldset disabled={isLogged}>
                             <form onSubmit={validateUser}>
@@ -187,18 +209,29 @@ function PaymentForm(){
                         onSubmit={makeTransfer}>
                             <div>
                                 {renderBillSelect()}
-                                {queryReceiverBill !== "" ? (
+                                {predefinedReceiverBill !== "" ? (
                                     <p>To: {receiver}</p>
                                 ) : (
-                                    <input type="text" name="receiver" placeholder="Pass receiver" maxLength={12} pattern="(\d{12})$" required/>
+                                    <div>
+                                        <button type="button" onClick={() => setPassReceiverOption("favorites")}>Select from favorites</button>
+                                        <button type="button" onClick={() => setPassReceiverOption("pass")}>Pass receiver</button>
+                                        {passReceiverOption == "favorites" ?(
+                                            <>
+                                            {renderFavoritesBillSelect()}
+                                            </>
+                                        ) : (
+                                            <input type="text" name="receiver" placeholder="Pass receiver" maxLength={12} pattern="(\d{12})$" required/>
+                                        )}
+                                        
+                                    </div>
                                 )}
-                                {queryAmount !== "" ? (
-                                    <p>Note: {queryNote}</p>
+                                {predefinedAmount !== "" ? (
+                                    <p>Note: {predefinedNote}</p>
                                 ) : (
                                     <input type="text" name="note" placeholder="Pass note" />
                                 )}
-                                {queryAmount !== "" ? (
-                                    <p>Amount: {queryAmount}</p>
+                                {predefinedAmount !== "" ? (
+                                    <p>Amount: {predefinedAmount}</p>
                                 ) : (
                                     <input type="text" name="amount" placeholder="Pass amount" pattern={"^[0-9]+(\.[0-9]{1,2})?$"} required />
                                 )}

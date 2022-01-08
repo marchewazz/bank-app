@@ -30,6 +30,7 @@ export default function NavBar(){
             ) : (
                 <>
                     <Link to="/profile" className="underline">Hello!</Link> |{" "}
+                    <Link to="/transaction">Make transfer</Link> |{" "}
                     <button onClick={logout}>Logout</button>
                 </>
             )}

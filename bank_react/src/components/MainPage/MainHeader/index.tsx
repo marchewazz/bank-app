@@ -2,7 +2,7 @@ import React from "react";
 
 function MainHeader(){
     return (
-        <h1>HEHEE</h1>
+        <h1>MAIN PAGE</h1>
     )
 }
 
