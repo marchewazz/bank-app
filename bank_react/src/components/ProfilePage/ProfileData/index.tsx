@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 
 import AuthService from "../../../services/AuthService";
-import BillsService from "../../../services/BillsService";
 import TransactionsService from "../../../services/TransactionsService";
 
 export default function ProfileData(){
     
     const [tab, setTab] = useState("");
+    const [billsTab, setBillsTab] = useState("Own");
     const [userData, setUserData]: any = useState("");
     const [accountHistory, setAccountHistory]: any = useState([]);
     const [userBills, setUserBills]: any = useState([]);
+    const [favoriteUserBills, setFavoriteUserBills]: any = useState([]);
 
     var as: AuthService = new AuthService();
-    var bs: BillsService = new BillsService();
     var ts: TransactionsService = new TransactionsService();
 
     function generateData(){
@@ -38,7 +38,7 @@ export default function ProfileData(){
         return <>{history}</>
     }
 
-    function generateBills(){
+    function generateOwnBills(){
         var bills: any[] = [];
         
         for (var bill of userBills){
@@ -46,7 +46,74 @@ export default function ProfileData(){
                 <p>Number: {bill.billNumber}</p>
                 <p>Name: {bill.billName}</p>
                 <p>Balance: {bill.billBalance}</p>
+                <div>
+                    <button>
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                        className="h-6 w-6" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor">
+                            <path stroke-linecap="round" 
+                            stroke-linejoin="round" 
+                            stroke-width="2" 
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                    </button>
+                    <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" 
+                    className="h-6 w-6" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor">
+                        <path stroke-linecap="round" 
+                        stroke-linejoin="round" 
+                        stroke-width="2" 
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    </button>
+                </div>
             </div>)
+        }
+        return <>{bills}</>
+    }
+
+    function generateFavoriteBills(){
+        var bills: any[] = [];
+        
+        if (favoriteUserBills.length == 0) bills.push(<p>You don't have any favorite bills</p>)
+        else {
+            for (var bill of favoriteUserBills){
+                bills.push(<div>
+                    <p>Number: {bill.billNumber}</p>
+                    <p>Name: {bill.billName}</p>
+                    <div>
+                        <button>
+                            <svg xmlns="http://www.w3.org/2000/svg" 
+                            className="h-6 w-6" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor">
+                                <path stroke-linecap="round" 
+                                stroke-linejoin="round" 
+                                stroke-width="2" 
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </button>
+                        <button>
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                        className="h-6 w-6" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor">
+                            <path stroke-linecap="round" 
+                            stroke-linejoin="round" 
+                            stroke-width="2" 
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        </button>
+                    </div>
+                </div>)
+            }
         }
         return <>{bills}</>
     }
@@ -60,6 +127,7 @@ export default function ProfileData(){
             })
         } else if (tab === "Bills"){
             setUserBills(JSON.parse(JSON.parse(as.getUserDetails())).bills)
+            setFavoriteUserBills(JSON.parse(JSON.parse(as.getUserDetails())).favoriteBills)
         }
     }, [tab])
 
@@ -84,7 +152,21 @@ export default function ProfileData(){
                 </div>
             ) : tab === "Bills" ? (
                 <div>
-                    {generateBills()}
+                    <div className="flex justify-evenly">
+                        <div onClick={() => setBillsTab("Own")}>My bills</div>
+                        <div onClick={() => setBillsTab("Favorite")}>Favorite</div>
+                        {billsTab == "Favorite" ? (<div>Add favorite bill</div>) : (null)}
+                    </div>
+                    {billsTab == "Own" ? (
+                        <>
+                            {generateOwnBills()}
+                        </>
+                        
+                    ) : (
+                        <>
+                            {generateFavoriteBills()}
+                        </>
+                    )}
                 </div>
             ) : (null)}
         </div>
