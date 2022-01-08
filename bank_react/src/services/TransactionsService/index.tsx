@@ -4,10 +4,10 @@ import { backendUrl } from "../../utilities";
 
 class TransactionsService{
     transferMoney(transferData: any){
-        return http.post(`${backendUrl}/transaction/transfer`, transferData)
+        return http.post(`${backendUrl}/transactions/transfer`, transferData)
     }
     getHistoryByAccountNumber(accountData: any){
-        return http.post(`${backendUrl}/transaction/historyaccount`, accountData)
+        return http.post(`${backendUrl}/transactions/historyaccount`, accountData)
     }
 }
 

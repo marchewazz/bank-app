@@ -206,7 +206,7 @@ class HistoryScreen(Screen):
         self.ids.historyLayout.clear_widgets()
         try:
             # REQUEST FOR LOGIN
-            r = requests.get(f'{backendUrl}/transaction/historyaccount', data=json.dumps({
+            r = requests.get(f'{backendUrl}/transactions/historyaccount', data=json.dumps({
                 "accountNumber": BankApp.LoggedUser.accountNumber}))
             transactions = json.loads(r.json()['transactions'])
         except:
@@ -352,7 +352,7 @@ class MakingTransferScreen(Screen):
             amount = self.ids.amount.text
 
         note = self.ids.note.text
-        r = requests.put(f'{backendUrl}/transaction/transfer', data=json.dumps({
+        r = requests.put(f'{backendUrl}/transactions/transfer', data=json.dumps({
             "sender": senderNumber,
             "receiver": receiverNumber,
             "amount": float(amount),
