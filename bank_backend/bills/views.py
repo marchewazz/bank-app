@@ -60,6 +60,33 @@ def addBill(request):
             else:
                 return JsonResponse({"message": "Bill created!"})
 
+
+@csrf_exempt
+def deleteBill(request):
+
+    billNumber = json.loads(request.body)["billNumber"]
+    accountNumber = json.loads(request.body)["accountNumber"]
+    print(request.body)
+    try:
+        client = MongoClient(mongoUrl)
+        db = client['bank']
+        accountsCol = db['accounts']
+        user = accountsCol.find_one({"accountNumber": accountNumber}, {"bills": 1})
+
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        if len(user["bills"]) == 1:
+            return JsonResponse({"message": "You have only one bill"})
+        else:
+            try:
+                accountsCol.update_one({"accountNumber": accountNumber}, {"$pull": {"bills":{"billNumber": billNumber}}})
+            except ConnectionError:
+                return JsonResponse({"message": "Database problem!"})
+            else:
+                return JsonResponse({"message": "Bill deleted!"})
+
+
 @csrf_exempt
 def getBills(request):
     accountNumber = json.loads(request.body)['accountNumber']
