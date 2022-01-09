@@ -50,7 +50,7 @@ def register(request):
                     return JsonResponse({"message": "Query problem!"})
                 else:
                     # CREATE ONE BILL WITH NEW ACCOUNT
-                    r = requests.put(f"http://127.0.0.1:8000/bills/add", data=json.dumps({
+                    r = requests.put(f"http://127.0.0.1:8000/bills/addown", data=json.dumps({
                         "accountNumber": randomAccNumber,
                         "billName": "Main bill"
                     }))

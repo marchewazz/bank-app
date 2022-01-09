@@ -4,6 +4,10 @@ import { backendUrl } from "../../utilities";
 
 class BillsService{
 
+    addOwnBill(billData: any){
+        return http.post(`${backendUrl}/bills/addown`, billData)
+    }
+
     deleteOwnBill(billData: any){
         return http.post(`${backendUrl}/bills/deleteown`, billData)
     }

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import AddNewBillForm from "../AddNewBillForm";
+
 import AuthService from "../../../services/AuthService";
 import BillsService from "../../../services/BillsService";
 import TransactionsService from "../../../services/TransactionsService";
@@ -11,6 +13,9 @@ export default function ProfileData(){
     const [userData, setUserData]: any = useState("");
     const [accountHistory, setAccountHistory]: any = useState([]);
     const [userBills, setUserBills]: any = useState([]);
+    //STATES TO FORMS
+    const [showAddNewBillForm, setShowAddNewBillForm] = useState(false);
+    
     const [favoriteUserBills, setFavoriteUserBills]: any = useState([]);
 
     var as: AuthService = new AuthService();
@@ -140,6 +145,10 @@ export default function ProfileData(){
     }, [tab])
 
     useEffect(() => {
+        setShowAddNewBillForm(false);
+    }, [billsTab])
+
+    useEffect(() => {
         setTab("Data");
     }, [])
 
@@ -163,11 +172,13 @@ export default function ProfileData(){
                     <div className="flex justify-evenly">
                         <div onClick={() => setBillsTab("Own")}>My bills</div>
                         <div onClick={() => setBillsTab("Favorite")}>Favorite</div>
-                        {billsTab == "Favorite" ? (<div>Add favorite bill</div>) : (null)}
+                        {billsTab == "Favorite" ? (<div onClick={() => setShowAddNewBillForm(!showAddNewBillForm)}>Add favorite bill</div>) : (<div onClick={() => setShowAddNewBillForm(!showAddNewBillForm)}>Add new bill</div>)}
                     </div>
                     {billsTab == "Own" ? (
                         <>
                             {generateOwnBills()}
+                               
+                
                         </>
                         
                     ) : (
@@ -175,6 +186,9 @@ export default function ProfileData(){
                             {generateFavoriteBills()}
                         </>
                     )}
+                    {showAddNewBillForm ? (
+                        <AddNewBillForm option={billsTab} accountNumber={userData.accountNumber}/>
+                    ):(null)}
                 </div>
             ) : (null)}
         </div>

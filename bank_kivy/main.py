@@ -236,7 +236,7 @@ class AddingBillScreen(Screen):
             self.settingInfoLabel("Bill name is too short")
         else:
             try:
-                r = requests.put(f'{backendUrl}/bills/add', data=json.dumps({
+                r = requests.put(f'{backendUrl}/bills/addown', data=json.dumps({
                     "accountNumber": BankApp.LoggedUser.accountNumber,
                     "billName": self.ids.billName.text
                 }))
