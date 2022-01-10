@@ -21,6 +21,8 @@ function PaymentForm(){
     const [predefinedReceiverBill, setPredefinedReceiverBill]: any = useState("");
     const [predefinedNote, setPredefinedNote]: any = useState("");
     const [predefinedAmount, setPredefinedAmount]: any = useState("");
+    //AND VARIABLE TO MAKE SURE EVERY DATA IS EXISTING
+    const [predefinedValuesValid, setPredefinedValuesValid] = useState(true);
     //FULL RECEIVER NAME
     const [receiver, setReceiver]: any = useState("");
     
@@ -56,16 +58,24 @@ function PaymentForm(){
         //OR GET FULL BILL NAME FOR PREDEFINED RECEIVER
         if (who === "sender"){
             bs.getBills({"accountNumber": data}).then((res: any) =>{
-                console.log(res.data.bills);
-                setSenderBills(res.data.bills);
-                setisLogged(true);
+                if (res.data.message === "no bills") {
+                    setPredefinedValuesValid(false);
+                } else {
+                    console.log(res.data.bills);
+                    setSenderBills(res.data.bills);
+                    setisLogged(true);
+                }
             })
         }
         if (who === "receiver"){
             bs.getOneBill({"billNumber": data}).then((res: any) =>{
-                const bill = JSON.parse(res.data.bill);
-                setReceiver(`${bill.billNumber}, ${bill.billName}`);
-                setPredefinedReceiverBill(`${bill.billNumber}`);
+                if (res.data.message === "no bill") {
+                    setPredefinedValuesValid(false);
+                } else {
+                    const bill = JSON.parse(res.data.bill);
+                    setReceiver(`${bill.billNumber}, ${bill.billName}`);
+                    setPredefinedReceiverBill(`${bill.billNumber}`);
+                }
             })
         }
     }
@@ -174,7 +184,7 @@ function PaymentForm(){
             setPredefinedSenderAccount(paymentData.get("sender"));
             getBills(paymentData.get("sender"), "sender");
             if (as.isUserLogged()){
-                if (JSON.parse(JSON.parse(as.getUserDetails())).accountNumber != paymentData.get("sender")) as.logoutUser()
+                if (JSON.parse(JSON.parse(as.getUserDetails())).accountNumber !== paymentData.get("sender")) as.logoutUser()
             }
         } else if (as.isUserLogged()){
             setPredefinedSenderAccount(JSON.parse(JSON.parse(as.getUserDetails())).accountNumber);
@@ -189,11 +199,12 @@ function PaymentForm(){
 
     return (
         <>
+            {predefinedValuesValid ? (
             <div className="border-2 border-black">
                 <fieldset className="grid grid-rows-3
                 md:grid-cols-3"
                 disabled={tries === 0 || done}>
-                    {predefinedSenderAccount != "" ?(
+                    {predefinedSenderAccount !== "" ?(
                         <p>From account: {predefinedSenderAccount}</p>
                     ) : (
                         <fieldset disabled={isLogged}>
@@ -215,7 +226,7 @@ function PaymentForm(){
                                     <div>
                                         <button type="button" onClick={() => setPassReceiverOption("favorites")}>Select from favorites</button>
                                         <button type="button" onClick={() => setPassReceiverOption("pass")}>Pass receiver</button>
-                                        {passReceiverOption == "favorites" ?(
+                                        {passReceiverOption === "favorites" ?(
                                             <>
                                             {renderFavoritesBillSelect()}
                                             </>
@@ -250,6 +261,9 @@ function PaymentForm(){
                     </p>
                 </fieldset>
             </div>
+            ) : (
+                <p>Transfer data isn't valid, check it and try again later</p>
+            )}
         </>
     )
 }
