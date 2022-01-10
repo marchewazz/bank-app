@@ -99,9 +99,12 @@ def getBills(request):
         db = client['bank']
         collection = db['accounts']
 
-        accountBills = list(collection.find({"accountNumber": accountNumber}, {"_id": 0,"bills": 1}))[0]['bills']
-        print(accountBills)
-        return JsonResponse({"bills": accountBills})
+        accountBills = list(collection.find({"accountNumber": accountNumber}, {"_id": 0,"bills": 1}))
+        if len(accountBills) > 0:
+            accountBills = accountBills[0]['bills']
+            return JsonResponse({"bills": accountBills})
+        else:
+            return JsonResponse({"message": "no bills"})
 
 
 @csrf_exempt
@@ -116,9 +119,12 @@ def getOneBill(request):
         db = client['bank']
         collection = db['accounts']
 
-        accountBills = list(collection.find({"bills.billNumber": billNumber}))[0]['bills']
+        accountBills = list(collection.find({"bills.billNumber": billNumber}))
+        if len(accountBills) > 0:
+            accountBills = accountBills[0]['bills']
+            for bill in accountBills:
+                if bill["billNumber"] == billNumber: bill = bill
 
-        for bill in accountBills:
-            if bill["billNumber"] == billNumber: bill = bill
-
-        return JsonResponse({"bill": dumps(bill, indent=2)})
+            return JsonResponse({"message": "got", "bill": dumps(bill, indent=2)})
+        else:
+            return JsonResponse({"message": "no bill"})
