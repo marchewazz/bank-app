@@ -1,19 +1,27 @@
 import http from "../../http-common";
+import { backendUrl } from "../../utilities";
 
 class AuthService {
     loginUser (data: any){
-        return http.put("/accounts/login", data);
+      return http.put("/accounts/login", data);
     }
+
     validatePINByEmail (data: any){
-        return http.post("/accounts/pinemail", data)
+      return http.post("/accounts/pinemail", data)
     }
+
     validatePINByAccNumber (data: any){
-        return http.post("/accounts/pinnumber", data)
+      return http.post("/accounts/pinnumber", data)
     }
+
     getUserDetails() : any | null{
-        return localStorage.getItem('userData');
-      }
-    
+      return localStorage.getItem('userData');
+    }
+
+    refreshUserData(){
+      return http.post(`${backendUrl}/accounts/refresh`, {accountNumber: JSON.parse(JSON.parse(this.getUserDetails())).accountNumber}) 
+    }
+
     setUserDetails(userData: any) : void {
       localStorage.setItem('userData', JSON.stringify(userData))
     }

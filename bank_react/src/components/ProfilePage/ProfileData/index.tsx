@@ -5,16 +5,15 @@ import AddNewBillForm from "../AddNewBillForm";
 import AuthService from "../../../services/AuthService";
 import BillsService from "../../../services/BillsService";
 import TransactionsService from "../../../services/TransactionsService";
+import { refreshUserData } from "../../../utilities";
 
 export default function ProfileData(){
     
-    const [tab, setTab] = useState("");
+    const [tab, setTab] = useState("Data");
     const [billsTab, setBillsTab] = useState("Own");
     const [userData, setUserData]: any = useState("");
     const [accountHistory, setAccountHistory]: any = useState([]);
     const [userBills, setUserBills]: any = useState([]);
-    //STATES TO FORMS
-    const [showAddNewBillForm, setShowAddNewBillForm] = useState(false);
     
     const [favoriteUserBills, setFavoriteUserBills]: any = useState([]);
 
@@ -129,6 +128,8 @@ export default function ProfileData(){
         bs.deleteOwnBill(billData).then((res: any) => {
             console.log(res);
         })
+        refreshUserData();
+        setUserBills(JSON.parse(JSON.parse(as.getUserDetails())).bills);
     }
 
     useEffect(() => {
@@ -145,12 +146,10 @@ export default function ProfileData(){
     }, [tab])
 
     useEffect(() => {
-        setShowAddNewBillForm(false);
-    }, [billsTab])
-
-    useEffect(() => {
-        setTab("Data");
-    }, [])
+        refreshUserData();
+        setUserBills(JSON.parse(JSON.parse(as.getUserDetails())).bills);
+        setFavoriteUserBills(JSON.parse(JSON.parse(as.getUserDetails())).favoriteBills)
+    }, [tab, billsTab])
 
     return (
         <div>
@@ -172,23 +171,23 @@ export default function ProfileData(){
                     <div className="flex justify-evenly">
                         <div onClick={() => setBillsTab("Own")}>My bills</div>
                         <div onClick={() => setBillsTab("Favorite")}>Favorite</div>
-                        {billsTab == "Favorite" ? (<div onClick={() => setShowAddNewBillForm(!showAddNewBillForm)}>Add favorite bill</div>) : (<div onClick={() => setShowAddNewBillForm(!showAddNewBillForm)}>Add new bill</div>)}
+                        {billsTab == "Favorite" ? (<div onClick={() => setBillsTab("AddFavorite")}>Add favorite bill</div>) : (<div onClick={() => setBillsTab("AddOwn")}>Add new bill</div>)}
                     </div>
-                    {billsTab == "Own" ? (
+                    {billsTab === "Own" ? (
                         <>
                             {generateOwnBills()}
-                               
-                
                         </>
                         
-                    ) : (
+                    ) : billsTab == "Favorite" ? (
                         <>
                             {generateFavoriteBills()}
                         </>
-                    )}
-                    {showAddNewBillForm ? (
-                        <AddNewBillForm option={billsTab} accountNumber={userData.accountNumber}/>
-                    ):(null)}
+                    ) : billsTab === "AddOwn" ? (
+                        <AddNewBillForm option="Own"/>
+                    ) : billsTab === "AddFavorite" ? (
+                        <AddNewBillForm option="Favorite"/>
+                    )
+                    : (null)}
                 </div>
             ) : (null)}
         </div>

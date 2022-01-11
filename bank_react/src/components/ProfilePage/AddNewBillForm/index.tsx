@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 
 import BillsService from "../../../services/BillsService";
+import AuthService from "../../../services/AuthService";
+import { refreshUserData } from "../../../utilities";
 
 function AddNewBillForm(props: any){
 
     var bs: BillsService = new BillsService();
+    var as: AuthService = new AuthService();
 
     const [info, setInfo] = useState("");
     
@@ -14,9 +17,10 @@ function AddNewBillForm(props: any){
         console.log(props.option);
         
         if(props.option === "Own"){
-            bs.addOwnBill({accountNumber: props.accountNumber, billName: data.get("billName")}).then((res: any) => {
+            bs.addOwnBill({accountNumber: JSON.parse(JSON.parse(as.getUserDetails())).accountNumber, billName: data.get("billName")}).then((res: any) => {
                 console.log(res);
                 setInfo(res.data.message);
+                if (res.data.message == "Bill created!") refreshUserData()
             })
         } else if (props.option === "Favorite"){
             //GONNA WRITE IT ONCE BACKEND FOR IT WILL BE READy
