@@ -47,7 +47,8 @@ export default function ProfileData(){
     function generateOwnBills(){
         var bills: any[] = [];
         
-        for (var bill of userBills){
+        for (const bill of userBills){
+            console.log(bill.billNumber);
             bills.push(<div>
                 <p>Number: {bill.billNumber}</p>
                 <p>Name: {bill.billName}</p>
@@ -125,6 +126,7 @@ export default function ProfileData(){
     }
 
     function deleteOwnBill(billData: any){
+        console.log(billData);
         bs.deleteOwnBill(billData).then((res: any) => {
             console.log(res);
         })
