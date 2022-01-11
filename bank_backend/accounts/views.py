@@ -137,6 +137,7 @@ def validatePINByAccNumber(request):
             return JsonResponse({"message": "Wrong PIN!"})
 
 
+@csrf_exempt
 def refreshUserData(request):
     accountNumber = json.loads(request.body)['accountNumber']
     print(accountNumber)
@@ -149,7 +150,8 @@ def refreshUserData(request):
             db = client['bank']
             collection = db['accounts']
 
-            userData = collection.find({"accountNumber": accountNumber})
+            userData = list(collection.find({"accountNumber": accountNumber}))[0]
+            print(userData)
         except ConnectionError:
             return JsonResponse({"message": "Database problem!"})
         else:
