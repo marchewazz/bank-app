@@ -18,7 +18,7 @@ def updateUserData():
     # FUNCTION UPDATES USER BILLS ETC.
     response = requests.get(f'{backendUrl}/accounts/refresh',
                             data=json.dumps({"accountNumber": BankApp.LoggedUser.accountNumber}))
-    userData = json.loads(response.json()['user'])[0]
+    userData = json.loads(response.json()['user'])
     BankApp.LoggedUser = User(userData)
 
 
