@@ -9,13 +9,15 @@ import { refreshUserData } from "../../../utilities";
 
 export default function ProfileData(){
     
-    const [tab, setTab] = useState("Data");
-    const [billsTab, setBillsTab] = useState("Own");
+    const [tab, setTab]: any = useState("Data");
+    const [billsTab, setBillsTab]: any = useState("Own");
     const [userData, setUserData]: any = useState("");
     const [accountHistory, setAccountHistory]: any = useState([]);
     const [userBills, setUserBills]: any = useState([]);
     
     const [favoriteUserBills, setFavoriteUserBills]: any = useState([]);
+
+    const [deleteInfo, setDeleteInfo]: any = useState("");
 
     var as: AuthService = new AuthService();
     var ts: TransactionsService = new TransactionsService();
@@ -128,8 +130,12 @@ export default function ProfileData(){
     function deleteOwnBill(billData: any){
         console.log(billData);
         bs.deleteOwnBill(billData).then((res: any) => {
-            console.log(res);
+            console.log(res.data.message);
+            setDeleteInfo(res.data.message);
         })
+        setTimeout(() => {
+            setDeleteInfo("");
+        }, 5000);
         refreshUserData();
         setUserBills(JSON.parse(JSON.parse(as.getUserDetails())).bills);
     }
@@ -148,6 +154,7 @@ export default function ProfileData(){
     }, [tab])
 
     useEffect(() => {
+        setDeleteInfo("");
         refreshUserData();
         setUserBills(JSON.parse(JSON.parse(as.getUserDetails())).bills);
         setFavoriteUserBills(JSON.parse(JSON.parse(as.getUserDetails())).favoriteBills)
@@ -177,11 +184,17 @@ export default function ProfileData(){
                     </div>
                     {billsTab === "Own" ? (
                         <>
+                            <div>
+                                <p> { deleteInfo }</p>
+                            </div>
                             {generateOwnBills()}
                         </>
                         
                     ) : billsTab == "Favorite" ? (
                         <>
+                            <div>
+                                <p> { deleteInfo }</p>
+                            </div>
                             {generateFavoriteBills()}
                         </>
                     ) : billsTab === "AddOwn" ? (
