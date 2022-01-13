@@ -89,7 +89,7 @@ export default function ProfileData(){
     function generateFavoriteBills(){
         var bills: any[] = [];
         
-        if (favoriteUserBills.length == 0) bills.push(<p>You don't have any favorite bills</p>)
+        if (favoriteUserBills.length === 0) bills.push(<p>You don't have any favorite bills</p>)
         else {
             for (var bill of favoriteUserBills){
                 bills.push(<div>
@@ -180,7 +180,8 @@ export default function ProfileData(){
                     <div className="flex justify-evenly">
                         <div onClick={() => setBillsTab("Own")}>My bills</div>
                         <div onClick={() => setBillsTab("Favorite")}>Favorite</div>
-                        {billsTab == "Favorite" ? (<div onClick={() => setBillsTab("AddFavorite")}>Add favorite bill</div>) : (<div onClick={() => setBillsTab("AddOwn")}>Add new bill</div>)}
+                        {billsTab === "Favorite" ? (<div onClick={() => setBillsTab("AddFavorite")}>Add favorite bill</div>) : 
+                        billsTab === "Own" ? (<div onClick={() => setBillsTab("AddOwn")}>Add new bill</div>) : (null)}
                     </div>
                     {billsTab === "Own" ? (
                         <>
@@ -190,7 +191,7 @@ export default function ProfileData(){
                             {generateOwnBills()}
                         </>
                         
-                    ) : billsTab == "Favorite" ? (
+                    ) : billsTab === "Favorite" ? (
                         <>
                             <div>
                                 <p> { deleteInfo }</p>

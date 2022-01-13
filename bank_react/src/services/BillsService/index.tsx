@@ -19,6 +19,10 @@ class BillsService{
     getOneBill(billData: any){
         return http.post(`${backendUrl}/bills/getonebill`, billData)
     }
+
+    addFavoriteBill(billData: any){
+        return http.post(`${backendUrl}/bills/addfavorite`, billData)
+    }
 }
 
 export default BillsService;
