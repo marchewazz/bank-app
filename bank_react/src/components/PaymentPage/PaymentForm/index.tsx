@@ -101,7 +101,7 @@ function PaymentForm(){
             billsOptions.push(<option value={bill.billNumber} selected>{`Bill: ${bill.billNumber}, ${bill.billName}`}</option>);
         }
 
-        return <select name="bill">{billsOptions}</select>
+        return <select name="favoriteBill">{billsOptions}</select>
     }
 
     function validatePIN(userData: any, method: string): any{
@@ -129,7 +129,7 @@ function PaymentForm(){
         var isPINValid: boolean = false;
         var sender = data.get("bill");
         //LOCAL VARIABLES BASED ON FORM OR STATE WITH PREDEFINED PARAMS
-        var receiver = predefinedReceiverBill === "" ? data.get("receiver") : predefinedReceiverBill;
+        var receiver = predefinedReceiverBill === "" ? passReceiverOption === "pass" ? data.get("receiver") : data.get("favoriteBill") : predefinedReceiverBill;
         var note = predefinedNote === "" ? data.get("note") : predefinedNote;
         var amount = predefinedAmount === "" ? data.get("amount") : predefinedAmount;
         
