@@ -62,7 +62,6 @@ function PaymentForm(){
                 if (res.data.message === "no bills") {
                     setPredefinedValuesValid(false);
                 } else {
-                    console.log(res.data.bills);
                     setSenderBills(res.data.bills);
                     setisLogged(true);
                 }
@@ -85,8 +84,7 @@ function PaymentForm(){
         //RENDERS SELECT FOR BILLS
         var billsOptions: any[] = [];
 
-        for (var bill of senderBills){
-            console.log(bill);
+        for (const bill of senderBills){
             billsOptions.push(<option value={bill.billNumber} selected>{`Bill: ${bill.billNumber}, ${bill.billName}`}</option>);
         }
 
@@ -96,11 +94,9 @@ function PaymentForm(){
     function renderFavoritesBillSelect(){
         //RENDERS SELECT FOR BILLS
         var billsOptions: any[] = [];
-        const exampleBills: any[] = [
-            {"billNumber": "222222", "billName": "bill1"},
-            {"billNumber": "222233", "billName": "bill2"},
-        ]
-        for (var bill of exampleBills){
+        
+        const favoriteBills = JSON.parse(JSON.parse(as.getUserDetails())).favoriteBills;
+        for (const bill of favoriteBills){
             console.log(bill);
             billsOptions.push(<option value={bill.billNumber} selected>{`Bill: ${bill.billNumber}, ${bill.billName}`}</option>);
         }
