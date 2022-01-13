@@ -128,3 +128,52 @@ def getOneBill(request):
             return JsonResponse({"message": "got", "bill": dumps(bill, indent=2)})
         else:
             return JsonResponse({"message": "no bill"})
+
+@csrf_exempt
+def addFavoriteBill(request):
+    billData = json.loads(request.body)
+
+    try:
+        client = MongoClient(mongoUrl)
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        db = client['bank']
+        collection = db['accounts']
+
+        isBillAlreadyFavorite = False if list(collection.find(
+            {"favoriteBills.billNumber": billData["billNumber"]},
+            {"accountNumber": billData["accountNumber"]}
+        )) == [] else True
+
+        print(isBillAlreadyFavorite)
+
+        if isBillAlreadyFavorite:
+            return JsonResponse({"message": "already exists"})
+        else:
+            try:
+                userWithPassedBill = list(collection.find({"bills.billNumber": billData["billNumber"]}))
+                if userWithPassedBill:
+                    userWithPassedBill = userWithPassedBill[0]
+                    if userWithPassedBill["accountNumber"] == billData["accountNumber"]:
+                        return JsonResponse({"message": "You cannot add your own bill!"})
+                    else:
+                        try:
+                            collection.update(
+                                {"accountNumber": billData['accountNumber']},
+                                {"$push": {"favoriteBills": {
+                                    "billNumber": billData["billNumber"],
+                                    "billName": billData["billName"],
+                                }}}
+                            )
+                        except ConnectionError:
+                            return JsonResponse({"message": "Database problem!"})
+                        else:
+                            return JsonResponse({"message": "Bill added!"})
+                else:
+                    return JsonResponse({"message": "Bill with this number doesn't exist!"})
+            except ConnectionError:
+                return JsonResponse({"message": "Database problem!"})
+            else:
+                print(billExists)
+                return JsonResponse({"message": "dsa!"})
