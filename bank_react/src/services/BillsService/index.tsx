@@ -16,6 +16,10 @@ class BillsService{
         return http.post(`${backendUrl}/bills/getall`, accountData)
     }
 
+    getFavoriteBills(billData: any){
+        return http.post(`${backendUrl}/bills/getfavorite`, billData)
+    }
+
     getOneBill(billData: any){
         return http.post(`${backendUrl}/bills/getonebill`, billData)
     }

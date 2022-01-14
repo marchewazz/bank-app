@@ -17,6 +17,7 @@ function PaymentForm(){
 
     const [senderBills, setSenderBills]: any[] = useState([]);
     const [senderEmail, setSenderEmail]: any = useState("");
+    const [senderFavoriteBills, setSenderFavoriteBills]: any[] = useState([]);
     //POSSIBLE PREDEFINED PARAMS
     const [predefinedSenderAccount, setPredefinedSenderAccount]: any = useState("");
     const [predefinedReceiverBill, setPredefinedReceiverBill]: any = useState("");
@@ -66,6 +67,9 @@ function PaymentForm(){
                     setisLogged(true);
                 }
             })
+            bs.getFavoriteBills({"accountNumber": data}).then((res: any) => {
+                setSenderFavoriteBills(res.data.favoriteBills);
+            })
         }
         if (who === "receiver"){
             bs.getOneBill({"billNumber": data}).then((res: any) =>{
@@ -83,7 +87,7 @@ function PaymentForm(){
     function renderBillSelect(){
         //RENDERS SELECT FOR BILLS
         var billsOptions: any[] = [];
-
+        
         for (const bill of senderBills){
             billsOptions.push(<option value={bill.billNumber} selected>{`Bill: ${bill.billNumber}, ${bill.billName}`}</option>);
         }
@@ -94,9 +98,9 @@ function PaymentForm(){
     function renderFavoritesBillSelect(){
         //RENDERS SELECT FOR BILLS
         var billsOptions: any[] = [];
+        console.log(senderFavoriteBills);
         
-        const favoriteBills = JSON.parse(JSON.parse(as.getUserDetails())).favoriteBills;
-        for (const bill of favoriteBills){
+        for (const bill of senderFavoriteBills){
             console.log(bill);
             billsOptions.push(<option value={bill.billNumber} selected>{`Bill: ${bill.billNumber}, ${bill.billName}`}</option>);
         }
