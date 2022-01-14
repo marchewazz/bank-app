@@ -32,7 +32,7 @@ function PaymentForm(){
     const [pending, setPending] = useState(false);
     const [info, setInfo]: any = useState("");
     const [done, setDone]: any = useState(false);
-    const [passReceiverOption, setPassReceiverOption] = useState("favorites");
+    const [passReceiverOption, setPassReceiverOption] = useState("pass");
     const [tries, setTries]: any = useState(3);
 
     function validateUser(event: any){
@@ -225,7 +225,7 @@ function PaymentForm(){
                                     <p>To: {receiver}</p>
                                 ) : (
                                     <div>
-                                        <button type="button" onClick={() => setPassReceiverOption("favorites")}>Select from favorites</button>
+                                        <button type="button" disabled={senderFavoriteBills.length == 0} onClick={() => setPassReceiverOption("favorites")}>Select from favorites</button>
                                         <button type="button" onClick={() => setPassReceiverOption("pass")}>Pass receiver</button>
                                         {passReceiverOption === "favorites" ?(
                                             <>
