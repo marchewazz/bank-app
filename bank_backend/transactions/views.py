@@ -13,6 +13,7 @@ def transferMoney(request):
 
     transferData = json.loads(request.body)
     print(transferData)
+    if transferData['sender'] == transferData['receiver']: return JsonResponse({"message": "You cannot transfer money between two same bills"})
     try:
         client = MongoClient(mongoUrl)
         db = client['bank']
