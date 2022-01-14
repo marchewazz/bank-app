@@ -170,10 +170,24 @@ def addFavoriteBill(request):
                             return JsonResponse({"message": "Database problem!"})
                         else:
                             return JsonResponse({"message": "Bill added!"})
-                else:
-                    return JsonResponse({"message": "Bill with this number doesn't exist!"})
             except ConnectionError:
                 return JsonResponse({"message": "Database problem!"})
             else:
-                print(billExists)
-                return JsonResponse({"message": "dsa!"})
+                return JsonResponse({"message": "Bill with this number doesn't exist!"})
+
+
+@csrf_exempt
+def getFavoriteBills(request):
+    accountNumber = json.loads(request.body)['accountNumber']
+    print(accountNumber)
+    try:
+        client = MongoClient(mongoUrl)
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        db = client['bank']
+        collection = db['accounts']
+
+        accountFavoriteBills = list(collection.find({"accountNumber": accountNumber}, {"_id": 0, "favoriteBills": 1}))[0]['favoriteBills']
+        print(accountFavoriteBills)
+        return JsonResponse({"favoriteBills": accountFavoriteBills})
