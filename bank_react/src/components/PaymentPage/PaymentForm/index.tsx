@@ -143,14 +143,14 @@ function PaymentForm(){
                 accountEmail: senderEmail,
                 accountPIN: data.get("pin")
             }
-            isPINValid = validatePIN(userData, "email")
+            isPINValid = await validatePIN(userData, "email")
         }
         if (predefinedSenderAccount !== ""){
             const userData = {
                 accountNumber: predefinedSenderAccount,
                 accountPIN: data.get("pin")
             }
-            isPINValid = validatePIN(userData, "number")
+            isPINValid = await validatePIN(userData, "number")
         }
         //IF PIN VALID THERE IS CALL FOR TRANSFER
         if (isPINValid){
@@ -160,7 +160,6 @@ function PaymentForm(){
                 note: note,
                 amount: amount
             }
-            console.log(transferData);
             ts.transferMoney(transferData).then((res: any) => {
                 if (res.data.message === "Transfer done!"){
                     setDone(true);
@@ -225,7 +224,7 @@ function PaymentForm(){
                                     <p>To: {receiver}</p>
                                 ) : (
                                     <div>
-                                        <button type="button" disabled={senderFavoriteBills.length == 0} onClick={() => setPassReceiverOption("favorites")}>Select from favorites</button>
+                                        <button type="button" disabled={senderFavoriteBills.length === 0} onClick={() => setPassReceiverOption("favorites")}>Select from favorites</button>
                                         <button type="button" onClick={() => setPassReceiverOption("pass")}>Pass receiver</button>
                                         {passReceiverOption === "favorites" ?(
                                             <>
