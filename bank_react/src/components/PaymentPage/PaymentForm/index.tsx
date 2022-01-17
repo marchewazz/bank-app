@@ -55,6 +55,34 @@ function PaymentForm(){
         setPending(false);
     }
 
+    async function validatePredefinedSender(event: any){
+        setPending(true);
+        event.preventDefault();
+        const data = new FormData(event.target);
+
+        console.log(data.get('pin'));
+        const userData = {
+            accountNumber: predefinedSenderAccount,
+            accountPIN: data.get("pin")
+        }
+        console.log(userData);
+        const isPINValid = await validatePIN(userData, "number");
+        if (isPINValid) {
+            getBills(predefinedSenderAccount, "sender");
+            setInfo("");
+            setTries(3);
+        } else {
+            setTries(tries - 1);
+            //MAYBE IT'S WEIRD ONE BUT IT'S WORKING
+            if (tries === 1){
+                setInfo("Too many tries! Try again later!");
+            } else{
+                setInfo("Wrong PIN!");
+            }
+        }
+        setPending(false);
+    }
+
     function getBills(data: string, who: string){
         //GET BILLS FOR SENDER TO CHOOSE
         //OR GET FULL BILL NAME FOR PREDEFINED RECEIVER
@@ -182,7 +210,6 @@ function PaymentForm(){
         //SET STATES IF ANY PREDEFINED PARAMS ARE PASSED
         if (paymentData.get("sender") != null) {
             setPredefinedSenderAccount(paymentData.get("sender"));
-            getBills(paymentData.get("sender"), "sender");
             if (as.isUserLogged()){
                 if (JSON.parse(JSON.parse(as.getUserDetails())).accountNumber !== paymentData.get("sender")) as.logoutUser()
             }
@@ -205,7 +232,15 @@ function PaymentForm(){
                 md:grid-cols-3"
                 disabled={tries === 0 || done}>
                     {predefinedSenderAccount !== "" ?(
-                        <p>From account: {predefinedSenderAccount}</p>
+                        <div>
+                            <p>From account: {predefinedSenderAccount}</p>
+                            {!isLogged ? (
+                                <form onSubmit={validatePredefinedSender}>
+                                    <input type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
+                                    <button disabled={pending} className="btn-style">OK</button>
+                                </form>
+                            ) : (null)}
+                        </div>
                     ) : (
                         <fieldset disabled={isLogged}>
                             <form onSubmit={validateUser}>
