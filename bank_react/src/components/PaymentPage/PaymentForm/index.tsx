@@ -236,7 +236,7 @@ function PaymentForm(){
                                         
                                     </div>
                                 )}
-                                {predefinedAmount !== "" ? (
+                                {predefinedNote !== "" ? (
                                     <p>Note: {predefinedNote}</p>
                                 ) : (
                                     <input type="text" name="note" placeholder="Pass note" />
