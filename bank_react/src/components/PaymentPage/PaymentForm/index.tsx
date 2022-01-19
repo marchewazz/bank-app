@@ -214,6 +214,7 @@ function PaymentForm(){
                 if (JSON.parse(JSON.parse(as.getUserDetails())).accountNumber !== paymentData.get("sender")) as.logoutUser()
             }
         } else if (as.isUserLogged()){
+            setisLogged(true);
             setPredefinedSenderAccount(JSON.parse(JSON.parse(as.getUserDetails())).accountNumber);
             getBills(JSON.parse(JSON.parse(as.getUserDetails())).accountNumber, "sender");
         }
