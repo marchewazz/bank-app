@@ -12,29 +12,42 @@ function AddNewBillForm(props: any){
     const [info, setInfo] = useState("");
     const [showEditBillQuestion, setShowEditBillQuestion] = useState(false);
 
-    function addBill(event: any){
+    function validatePIN(userData: any): any{
+        return as.validatePINByAccNumber(userData).then((res: any) => {
+            if (res.data.message === "Logged!") return true
+            return false
+        })
+    }
+
+    async function addBill(event: any){
         event.preventDefault();
         setInfo("");
         setShowEditBillQuestion(false);
         const data = new FormData(event.target);
         console.log(props.option);
-        
-        if(props.option === "Own"){
-            bs.addOwnBill({accountNumber: JSON.parse(JSON.parse(as.getUserDetails())).accountNumber, billName: data.get("billName")}).then((res: any) => {
-                console.log(res);
-                setInfo(res.data.message);
-                if (res.data.message === "Bill created!") refreshUserData()
-            })
-        } else if (props.option === "Favorite"){
-            bs.addFavoriteBill({accountNumber: JSON.parse(JSON.parse(as.getUserDetails())).accountNumber, billName: data.get("billName"), billNumber: data.get("billNumber")}).then((res: any) => {
-                if (res.data.message === "already exists"){
-                    setInfo("You have bill with this number in your favorites, do you want to update its name?");
-                    setShowEditBillQuestion(true);
-                } else {
+        const isPINValid = await validatePIN({accountNumber: JSON.parse(JSON.parse(as.getUserDetails())).accountNumber, accountPIN: data.get("pin")});
+
+        if (isPINValid){
+            if(props.option === "Own"){
+                bs.addOwnBill({accountNumber: JSON.parse(JSON.parse(as.getUserDetails())).accountNumber, billName: data.get("billName")}).then((res: any) => {
+                    console.log(res);
                     setInfo(res.data.message);
-                }
-            })
+                    if (res.data.message === "Bill created!") refreshUserData()
+                })
+            } else if (props.option === "Favorite"){
+                bs.addFavoriteBill({accountNumber: JSON.parse(JSON.parse(as.getUserDetails())).accountNumber, billName: data.get("billName"), billNumber: data.get("billNumber")}).then((res: any) => {
+                    if (res.data.message === "already exists"){
+                        setInfo("You have bill with this number in your favorites, do you want to update its name?");
+                        setShowEditBillQuestion(true);
+                    } else {
+                        setInfo(res.data.message);
+                    }
+                })
+            }
+        } else {
+            setInfo("Wrong PIN!")
         }
+        
     }
 
     return (
@@ -49,6 +62,7 @@ function AddNewBillForm(props: any){
                 {props.option === "Favorite" ? (
                     <input type="text" name="billNumber" placeholder="Pass bill number" maxLength={12} pattern="(\d{12})$" required/>
                 ) : (null)}
+                <input type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
                 <button>Add</button>
             </form>
             <p> { info }</p>
