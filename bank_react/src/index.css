@@ -7,4 +7,8 @@
         @apply bg-red-800 text-white border-2 border-black rounded-lg px-10 py-5
                 hover:bg-red-600 hover:text-black
     }
+    .input-text-style {
+        @apply bg-transparent border-b-2 border-gray-400 text-center outline-none transform transition-all
+        focus:border-black
+    }
 }

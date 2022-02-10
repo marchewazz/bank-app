@@ -226,18 +226,19 @@ function PaymentForm(){
     }, [])
 
     return (
-        <>
+        <div className="grid auto-rows-auto">
             {predefinedValuesValid ? (
-            <div className="border-2 border-black">
-                <fieldset className="grid grid-rows-3
-                md:grid-cols-3"
+            <div className="grid border-2 border-gray-400 rounded-lg mx-5
+            md:mx-24
+            lg:mx-72">
+                <fieldset className="grid auto-rows-auto justify-self-center py-10"
                 disabled={tries === 0 || done}>
                     {predefinedSenderAccount !== "" ?(
-                        <div>
+                        <div className="grid justify-items-center">
                             <p>From account: {predefinedSenderAccount}</p>
                             {!isLogged ? (
                                 <form onSubmit={validatePredefinedSender}>
-                                    <input type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
+                                    <input className="input-text-style" type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
                                     <button disabled={pending} className="btn-style">OK</button>
                                 </form>
                             ) : (null)}
@@ -245,54 +246,59 @@ function PaymentForm(){
                     ) : (
                         <fieldset disabled={isLogged}>
                             <form onSubmit={validateUser}>
-                                <input type="text" name="email" placeholder="Pass email" required/>
-                                <input type="password" name="password" placeholder="Pass password" required/>
+                                <input className="input-text-style" type="text" name="email" placeholder="Pass email" required/>
+                                <input className="input-text-style" type="password" name="password" placeholder="Pass password" required/>
                                 <button disabled={pending} className="btn-style">Login</button>
                             </form>
                         </fieldset>
                     )}
                     {isLogged ? (
-                        <form className="md:grid md:col-span-2 md:grid-cols-2" 
+                        <form 
                         onSubmit={makeTransfer}>
-                            <div>
+                            <div className="grid grid-rows-3 gap-y-4">
+                                <div className="grid place-items-center">
                                 {renderBillSelect()}
-                                {predefinedReceiverBill !== "" ? (
-                                    <p>To: {receiver}</p>
-                                ) : (
-                                    <div>
-                                        <button type="button" disabled={senderFavoriteBills.length === 0} onClick={() => setPassReceiverOption("favorites")}>Select from favorites</button>
-                                        <button type="button" onClick={() => setPassReceiverOption("pass")}>Pass receiver</button>
-                                        {passReceiverOption === "favorites" ?(
-                                            <>
-                                            {renderFavoritesBillSelect()}
-                                            </>
-                                        ) : (
-                                            <input type="text" name="receiver" placeholder="Pass receiver" maxLength={12} pattern="(\d{12})$" required/>
-                                        )}
-                                        
-                                    </div>
-                                )}
-                                {predefinedNote !== "" ? (
-                                    <p>Note: {predefinedNote}</p>
-                                ) : (
-                                    <input type="text" name="note" placeholder="Pass note" />
-                                )}
-                                {predefinedAmount !== "" ? (
-                                    <p>Amount: {predefinedAmount}</p>
-                                ) : (
-                                    <input type="text" name="amount" placeholder="Pass amount" pattern={"^[0-9]+(\.[0-9]{1,2})?$"} required />
-                                )}
-                                
+                                </div>
+                                <div className="grid auto-rows-auto">
+                                    {predefinedReceiverBill !== "" ? (
+                                        <p>To: {receiver}</p>
+                                    ) : (
+                                        <div className="grid grid-rows-2">
+                                            <button type="button" disabled={senderFavoriteBills.length === 0} onClick={() => setPassReceiverOption("favorites")}>Select from favorites</button>
+                                            <button type="button" onClick={() => setPassReceiverOption("pass")}>Pass receiver</button>
+                                            {passReceiverOption === "favorites" ?(
+                                                <>
+                                                {renderFavoritesBillSelect()}
+                                                </>
+                                            ) : (
+                                                <input className="input-text-style" type="text" name="receiver" placeholder="Pass receiver" maxLength={12} pattern="(\d{12})$" required/>
+                                            )}
+
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="grid grid-rows-2 text-center gap-y-4">
+                                    {predefinedNote !== "" ? (
+                                        <span>Note: {predefinedNote}</span>
+                                    ) : (
+                                        <input className="input-text-style" type="text" name="note" placeholder="Pass note" />
+                                    )}
+                                    {predefinedAmount !== "" ? (
+                                        <span>Amount: {predefinedAmount}</span>
+                                    ) : (
+                                        <input className="input-text-style" type="text" name="amount" placeholder="Pass amount" pattern={"^[0-9]+(\.[0-9]{1,2})?$"} required />
+                                    )}
+                                </div>
                             </div>
                             <div>
-                                <input type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
+                                <input className="input-text-style" type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
                                 <button disabled={pending} className="btn-style">OK</button>
                             </div>
                         </form>
                     ) : (
                        null 
                     )}
-                    <p>
+                    <p className="text-center">
                         { info }
                     </p>
                 </fieldset>
@@ -300,7 +306,7 @@ function PaymentForm(){
             ) : (
                 <p>Transfer data isn't valid, check it and try again later</p>
             )}
-        </>
+        </div>   
     )
 }
 
