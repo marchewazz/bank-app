@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 import AccountService from "../../../services/AccountsService";
 
@@ -37,7 +38,7 @@ export default function RegisterForm(){
             as.registerUser(userData).then((res: any) => {
                 setInfo(res.data.message);
                 if(res.data.message === "Added!") setShowLoginButton(true)
-                if(res.data.message === "You've got already account!") setShowLoginButton(true)
+                if(res.data.message === "We've got already account!") setShowLoginButton(true)
             })
         }
     }
@@ -91,9 +92,11 @@ export default function RegisterForm(){
                         { info } 
                     </span>
                     {showLoginButton ? (
-                        <button className="btn-style mx-36">
-                            Login
-                        </button>
+                        <Link to="/login">
+                            <button className="btn-style mx-36">
+                                Login
+                            </button>
+                        </Link>
                     ) : (
                         <button className="btn-style mx-36">
                             Register
