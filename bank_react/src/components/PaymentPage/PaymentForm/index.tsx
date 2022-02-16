@@ -263,9 +263,34 @@ function PaymentForm(){
                                     {predefinedReceiverBill !== "" ? (
                                         <p>To: {receiver}</p>
                                     ) : (
-                                        <div className="grid grid-rows-2">
-                                            <button type="button" disabled={senderFavoriteBills.length === 0} onClick={() => setPassReceiverOption("favorites")}>Select from favorites</button>
-                                            <button type="button" onClick={() => setPassReceiverOption("pass")}>Pass receiver</button>
+                                        <div className="grid grid-rows-3 gap-y-3 place-items-stretch">
+                                            <span className="grid place-items-stretch">
+                                                <input className="peer hidden"
+                                                type="radio" 
+                                                name="receiverOption" 
+                                                id="favorites" 
+                                                onClick={() => setPassReceiverOption("favorites")}
+                                                disabled={senderFavoriteBills.length === 0}
+                                                />
+                                                <label htmlFor="favorites"
+                                                className="transaction-btn-style">
+                                                    Select from favorites
+                                                </label>
+                                            </span>
+
+                                            <span className="grid place-items-stretch">
+                                                <input className="peer hidden"
+                                                type="radio" 
+                                                name="receiverOption" 
+                                                id="pass"
+                                                onClick={() => setPassReceiverOption("pass")}
+                                                defaultChecked={true}
+                                                />
+                                                <label htmlFor="pass"
+                                                className="transaction-btn-style">
+                                                    Pass receiver
+                                                </label>
+                                            </span>
                                             {passReceiverOption === "favorites" ?(
                                                 <>
                                                 {renderFavoritesBillSelect()}
@@ -292,7 +317,7 @@ function PaymentForm(){
                             </div>
                             <div>
                                 <input className="input-text-style" type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
-                                <button disabled={pending} className="btn-style">OK</button>
+                                <button disabled={pending || done} className="btn-style">OK</button>
                             </div>
                         </form>
                     ) : (

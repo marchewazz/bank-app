@@ -3,9 +3,19 @@
 @tailwind utilities;
 
 @layer components {
+    .disabled-styles {
+        @apply disabled:border-gray-400 disabled:text-gray-400 disabled:bg-gray-200 
+        peer-disabled:border-gray-400 peer-disabled:text-gray-400 peer-disabled:bg-gray-200 
+        transform transition-all
+    }
     .btn-style {
         @apply bg-red-800 text-white border-2 border-black rounded-lg px-10 py-5
                 hover:bg-red-600 hover:text-black
+    }
+    .transaction-btn-style {
+        @apply disabled-styles rounded-lg border-2 border-gray-400 text-gray-400 text-center place-self-stretch
+        hover:shadow-lg hover:shadow-black
+        peer-checked:bg-red-800 peer-checked:text-white peer-checked:border-black
     }
     .input-text-style {
         @apply bg-transparent border-b-2 border-gray-400 text-center outline-none transform transition-all
