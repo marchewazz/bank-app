@@ -21,4 +21,9 @@
         @apply bg-transparent border-b-2 border-gray-400 text-center outline-none transform transition-all
         focus:border-black
     }
+    .navbar-link {
+        @apply grid place-content-center bg-red-800
+        hover:text-black hover:bg-white
+        transform transition-all
+    }
 }
