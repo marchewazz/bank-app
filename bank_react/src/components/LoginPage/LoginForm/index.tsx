@@ -57,23 +57,46 @@ export default function LoginForm(){
 
     return (
         <>  
-            <fieldset disabled={tries === 0}>
+            <fieldset className="grid auto-rows-auto grid-flow-row border-gray-400 border-2 m-20 p-10 mt-10 rounded-lg"
+            disabled={tries === 0}>
                 <fieldset disabled={isLogged}>
-                    <form onSubmit={validateUser}>
-                        <input type="text" name="email" placeholder="Pass email" required/>
-                        <input type="password" name="password" placeholder="Pass password" required/>
-                        <button className="btn-style">Login</button>
+                    <form onSubmit={validateUser}
+                    className="grid gap-y-5 auto-rows-auto grid-flow-row mx-24">
+                        <input className="input-text-style"
+                        type="text" 
+                        name="email" 
+                        placeholder="Pass email" 
+                        required/>
+                        <input className="input-text-style"
+                        type="password" 
+                        name="password" 
+                        placeholder="Pass password" 
+                        required/>
+                        <button className="btn-style mx-36">
+                            Login
+                        </button>
                     </form>
                 </fieldset>
-                <p> { info }</p>
-                {isLogged ?(
-                    <form onSubmit={validatePIN}>
-                        <input type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
-                        <button className="btn-style">OK</button>
-                    </form>
-                ) : (
-                    <div></div>
-                )}
+                <div className="grid grid-rows-2 justify-items-center">
+                    <p> { info }</p>
+                    {isLogged ?(
+                        <form onSubmit={validatePIN}
+                        className="grid grid-flow-col gap-x-3 items-center">
+                            <input className="input-text-style"
+                            type="password" 
+                            name="pin" 
+                            minLength={4} 
+                            maxLength={4} 
+                            placeholder="Pass PIN" 
+                            required />
+                            <button className="btn-style">
+                                OK
+                            </button>
+                        </form>
+                    ) : (
+                        <div></div>
+                    )}
+                </div>
             </fieldset>
         </>
     )
