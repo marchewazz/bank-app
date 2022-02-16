@@ -51,28 +51,59 @@ function AddNewBillForm(props: any){
     }
 
     return (
-        <>
-            {props.option === "Own" ? (
-                <p>Add your new bill</p>
-            ) : (
-                <p>Add favorite bill</p>
-            )}
-            <form onSubmit={addBill}>
-                <input type="text" name="billName" placeholder="Pass bill name" required/>
+        <div className="grid grid-rows-2">
+            <form onSubmit={addBill}
+            className="grid grid-flow-row place-items-center gap-y-5">
                 {props.option === "Favorite" ? (
-                    <input type="text" name="billNumber" placeholder="Pass bill number" maxLength={12} pattern="(\d{12})$" required/>
+                    <span>Add favorite bill</span>
+                ) : (
+                    <span>Add your new bill</span>
+                )}
+                <input className="input-text-style"
+                type="text" 
+                name="billName" 
+                placeholder="Pass bill name" 
+                required
+                />
+                {props.option === "Favorite" ? (
+                    <input className="input-text-style"
+                    type="text" 
+                    name="billNumber" 
+                    placeholder="Pass bill number" 
+                    maxLength={12} 
+                    pattern="(\d{12})$" 
+                    required
+                    />
                 ) : (null)}
-                <input type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
-                <button>Add</button>
+                <input className="input-text-style"
+                type="password" 
+                name="pin" 
+                minLength={4} 
+                maxLength={4} 
+                placeholder="Pass PIN" 
+                required 
+                />
+                <button className="btn-style">
+                    Add
+                </button>
             </form>
-            <p> { info }</p>
-            {showEditBillQuestion ? (
-                <div>
-                    <button>YES</button>
-                    <button>NO</button>
-                </div>
-            ) : (null)}
-        </>
+            <div className="grid items-center">
+                <span className="place-self-center"> 
+                    { info }
+                </span>
+                {showEditBillQuestion ? (
+                    <div className="flex justify-evenly self-center">
+                        <button className="btn-style">
+                            YES
+                        </button>
+                        <button className="btn-style">
+                            NO
+                        </button>
+                    </div>
+                ) : (null)}
+            </div>
+            
+        </div>
     )
 }
 
