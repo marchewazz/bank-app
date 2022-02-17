@@ -22,8 +22,11 @@
         focus:border-black
     }
     .navbar-link {
-        @apply grid place-content-center bg-red-800
+        @apply grid place-content-center bg-red-800 text-white
         hover:text-black hover:bg-white
         transform transition-all
+    }
+    .profile-nav-style {
+        @apply navbar-link peer-checked:bg-red-600 
     }
 }

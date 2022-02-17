@@ -168,10 +168,45 @@ export default function ProfileData(){
 
     return (
         <div>
-            <div className="flex justify-evenly">
-                <div onClick={() => setTab("Data")}>Data</div>
-                <div onClick={() => setTab("History")}>History</div>
-                <div onClick={() => setTab("Bills")}>Bills</div>
+            <div className="w-screen h-12 grid grid-rows-1 grid-flow-col justify-items-stretch
+            divide-x-8 divide-white">
+                <span className="grid place-items-stretch">
+                    <input className="peer hidden"
+                    type="radio" 
+                    name="tab" 
+                    id="data" 
+                    onClick={() => setTab("Data")} 
+                    defaultChecked={true}
+                    />
+                    <label htmlFor="data"
+                    className="profile-nav-style">
+                        Data
+                    </label>
+                </span>
+                <span className="grid place-items-stretch">
+                    <input className="peer hidden"
+                    type="radio" 
+                    name="tab" 
+                    id="history"
+                    onClick={() => setTab("History")} 
+                    />
+                    <label htmlFor="history"
+                    className="profile-nav-style">
+                        History
+                    </label>
+                </span>
+                <span className="grid place-items-stretch">
+                    <input className="peer hidden"
+                    type="radio" 
+                    name="tab" 
+                    id="bills"
+                    onClick={() => setTab("Bills")} 
+                    />
+                    <label htmlFor="bills"
+                    className="profile-nav-style">
+                        Bills
+                    </label>
+                </span>
             </div>
             { tab === "Data" ? (
                 <div>
@@ -183,11 +218,45 @@ export default function ProfileData(){
                 </div>
             ) : tab === "Bills" ? (
                 <div>
-                    <div className="flex justify-evenly">
-                        <div onClick={() => setBillsTab("Own")}>My bills</div>
-                        <div onClick={() => setBillsTab("Favorite")}>Favorite</div>
-                        {billsTab === "Favorite" ? (<div onClick={() => setBillsTab("AddFavorite")}>Add favorite bill</div>) : 
-                        billsTab === "Own" ? (<div onClick={() => setBillsTab("AddOwn")}>Add new bill</div>) : (null)}
+                    <div className="w-screen h-12 grid grid-rows-1 grid-flow-col justify-items-stretch mt-2
+                    divide-x-8 divide-white">
+                        <span className="grid place-items-stretch">
+                            <input className="peer hidden"
+                            type="radio"
+                            name="billsTab"
+                            id="own" 
+                            onClick={() => setBillsTab("Own")}
+                            defaultChecked={true}
+                            />
+                            <label htmlFor="own"
+                            className="profile-nav-style">
+                                My bills
+                            </label>
+                        </span>
+                        <span className="grid place-items-stretch">
+                            <input className="peer hidden"
+                            type="radio"
+                            name="billsTab"
+                            id="favorite" 
+                            onClick={() => setBillsTab("Favorite")}
+                            />
+                            <label htmlFor="favorite"
+                            className="profile-nav-style">
+                                Favorite
+                            </label>
+                        </span>
+                        {billsTab === "Favorite" ? (
+                            <button onClick={() => setBillsTab("AddFavorite")}
+                            className="profile-nav-style">
+                                Add favorite bill
+                            </button>
+                            ) : 
+                        billsTab === "Own" ? (
+                            <button onClick={() => setBillsTab("AddOwn")}
+                            className="profile-nav-style">
+                                Add new bill
+                            </button>
+                            ) : (null)}
                     </div>
                     {billsTab === "Own" ? (
                         <>

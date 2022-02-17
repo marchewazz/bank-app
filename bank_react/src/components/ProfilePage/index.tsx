@@ -39,7 +39,7 @@ export default function ProfilePage(){
     }, [])
 
     return (
-        <>
+        <div className="mt-2">
             { !isAuth ? (
                 <fieldset disabled={tries === 0}>
                     <form onSubmit={validatePIN}>
@@ -51,6 +51,6 @@ export default function ProfilePage(){
             ) : (
                 <ProfileData />
             )}
-        </>
+        </div>
     )
 }
