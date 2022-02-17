@@ -10,12 +10,13 @@
     }
     .btn-style {
         @apply bg-red-800 text-white border-2 border-black rounded-lg px-10 py-5
-                hover:bg-red-600 hover:text-black
+        hover:bg-red-600 hover:text-black
+        transform transition-all ease-in
     }
     .transaction-btn-style {
         @apply disabled-styles rounded-lg border-2 border-gray-400 text-gray-400 text-center place-self-stretch
         hover:shadow-lg hover:shadow-black
-        peer-checked:bg-red-800 peer-checked:text-white peer-checked:border-black
+        peer-checked:bg-red-800 peer-checked:text-white peer-checked:border-black peer-checked:hover:bg-red-600
     }
     .input-text-style {
         @apply bg-transparent border-b-2 border-gray-400 text-center outline-none transform transition-all
@@ -24,9 +25,12 @@
     .navbar-link {
         @apply grid place-content-center bg-red-800 text-white
         hover:text-black hover:bg-white
-        transform transition-all
+        transform transition-all ease-in
     }
     .profile-nav-style {
         @apply navbar-link peer-checked:bg-red-600 
+    }
+    .profile-data-tab-style {
+        @apply grid grid-flow-row place-content-center divide-y-2 divide-gray-400 gap-y-2 border-2 border-gray-400 rounded-lg mx-24 mt-10 p-10
     }
 }

@@ -55,9 +55,9 @@ function AddNewBillForm(props: any){
             <form onSubmit={addBill}
             className="grid grid-flow-row place-items-center gap-y-5">
                 {props.option === "Favorite" ? (
-                    <span>Add favorite bill</span>
+                    <span className="text-center font-bold">Add favorite bill</span>
                 ) : (
-                    <span>Add your new bill</span>
+                    <span className="text-center font-bold">Add your new bill</span>
                 )}
                 <input className="input-text-style"
                 type="text" 

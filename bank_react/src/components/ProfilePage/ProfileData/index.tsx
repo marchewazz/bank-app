@@ -28,8 +28,15 @@ export default function ProfileData(){
 
     function generateData(){
         return <>   
-                    <p>Email: {userData.accountEmail}</p>
-                    <p>Number: {userData.accountNumber}</p>
+                    <p className="text-center font-bold">
+                        Your data!
+                    </p>
+                    <p>
+                        Email: {userData.accountEmail}
+                    </p>
+                    <p>
+                        Number: {userData.accountNumber}
+                    </p>
                 </>
     }
 
@@ -38,15 +45,30 @@ export default function ProfileData(){
 
         for (var transaction of accountHistory){
             history.push(<div>
-                <p>Date: {new Date(transaction.date.$date).toUTCString()}</p>
-                <p>From: {transaction.sender.bill}</p>
-                <p>To: {transaction.receiver.bill}</p>
-                <p>Note: {transaction.note}</p>
-                <p>Amount: {transaction.amount}</p>
+                <p>
+                    Date: {new Date(transaction.date.$date).toUTCString()}
+                </p>
+                <p>
+                    From: {transaction.sender.bill}
+                </p>
+                <p>
+                    To: {transaction.receiver.bill}
+                </p>
+                <p>
+                    Note: {transaction.note}
+                </p>
+                <p>
+                    Amount: {transaction.amount}
+                </p>
             </div>)
         }
         
-        return <>{history}</>
+        return <>
+            <p className="text-center font-bold">
+                Your history!
+            </p>
+            {history}
+        </>
     }
 
     function generateOwnBills(){
@@ -58,8 +80,8 @@ export default function ProfileData(){
                 <p>Number: {bill.billNumber}</p>
                 <p>Name: {bill.billName}</p>
                 <p>Balance: {bill.billBalance}</p>
-                <div>
-                    <button>
+                <div className="grid grid-flow-col place-items-center">
+                    <button className="btn-style">
                         <svg xmlns="http://www.w3.org/2000/svg" 
                         className="h-6 w-6" 
                         fill="none" 
@@ -71,7 +93,8 @@ export default function ProfileData(){
                             d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
                     </button>
-                    <button onClick={() => deleteOwnBill({billNumber: bill.billNumber, accountNumber: userData.accountNumber})}>
+                    <button onClick={() => deleteOwnBill({billNumber: bill.billNumber, accountNumber: userData.accountNumber})}
+                    className="btn-style">
                         <svg xmlns="http://www.w3.org/2000/svg" 
                         className="h-6 w-6" 
                         fill="none" 
@@ -86,7 +109,12 @@ export default function ProfileData(){
                 </div>
             </div>)
         }
-        return <>{bills}</>
+        return <>
+            <p className="text-center font-bold">
+                Your bills!
+            </p>
+            {bills}
+        </>
     }
 
     function generateFavoriteBills(){
@@ -98,8 +126,8 @@ export default function ProfileData(){
                 bills.push(<div>
                     <p>Number: {bill.billNumber}</p>
                     <p>Name: {bill.billName}</p>
-                    <div>
-                        <button>
+                    <div className="grid place-items-center grid-flow-col">
+                        <button className="btn-style">
                             <svg xmlns="http://www.w3.org/2000/svg" 
                             className="h-6 w-6" 
                             fill="none" 
@@ -111,7 +139,7 @@ export default function ProfileData(){
                                 d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
                         </button>
-                        <button>
+                        <button className="btn-style">
                         <svg xmlns="http://www.w3.org/2000/svg" 
                         className="h-6 w-6" 
                         fill="none" 
@@ -123,14 +151,20 @@ export default function ProfileData(){
                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                         </button>
-                        <button onClick={() => navigate(`/transaction?receiver=${bill.billNumber}`)}>
+                        <button onClick={() => navigate(`/transaction?receiver=${bill.billNumber}`)}
+                        className="btn-style">
                             Make transfer
                         </button>
                     </div>
                 </div>)
             }
         }
-        return <>{bills}</>
+        return <>
+            <p className="text-center font-bold">
+                Your favorite bills!
+            </p>
+            {bills}
+        </>
     }
 
     function deleteOwnBill(billData: any){
@@ -209,12 +243,14 @@ export default function ProfileData(){
                 </span>
             </div>
             { tab === "Data" ? (
-                <div>
+                <div className="profile-data-tab-style">
                     {generateData()}
                 </div>
             ) : tab === "History" ? (
                 <div>
-                    {generateHistory()}
+                    <div className="profile-data-tab-style">
+                        {generateHistory()}
+                    </div>
                 </div>
             ) : tab === "Bills" ? (
                 <div>
@@ -242,7 +278,7 @@ export default function ProfileData(){
                             />
                             <label htmlFor="favorite"
                             className="profile-nav-style">
-                                Favorite
+                                Favorite bills
                             </label>
                         </span>
                         {billsTab === "Favorite" ? (
@@ -262,16 +298,20 @@ export default function ProfileData(){
                         <>
                             <div>
                                 <p> { deleteInfo }</p>
+                                <div className="profile-data-tab-style">
+                                    {generateOwnBills()}
+                                </div>
                             </div>
-                            {generateOwnBills()}
                         </>
                         
                     ) : billsTab === "Favorite" ? (
                         <>
                             <div>
                                 <p> { deleteInfo }</p>
+                                <div className="profile-data-tab-style">
+                                    {generateFavoriteBills()}
+                                </div>
                             </div>
-                            {generateFavoriteBills()}
                         </>
                     ) : billsTab === "AddOwn" ? (
                         <AddNewBillForm option="Own"/>
