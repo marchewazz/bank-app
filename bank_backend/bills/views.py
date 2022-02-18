@@ -191,3 +191,21 @@ def getFavoriteBills(request):
         accountFavoriteBills = list(collection.find({"accountNumber": accountNumber}, {"_id": 0, "favoriteBills": 1}))[0]['favoriteBills']
         print(accountFavoriteBills)
         return JsonResponse({"favoriteBills": accountFavoriteBills})
+
+@csrf_exempt
+def updateDavoriteName(request):
+    billData = json.loads(request.body)
+    try:
+        client = MongoClient(mongoUrl)
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        db = client['bank']
+        collection = db['accounts']
+
+        collection.update(
+            {"accountNumber": billData["accountNumber"], "favoriteBills.billNumber": billData['billNumber']},
+            {"$set": {"favoriteBills.$.billName": billData["billName"]}}
+        )
+        return JsonResponse({"message": "updated"})
+

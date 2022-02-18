@@ -8,5 +8,6 @@ urlpatterns = [
     path("getall", views.getBills, name='getBills'),
     path("getfavorite", views.getFavoriteBills, name='getFavoriteBills'),
     path("getonebill", views.getOneBill, name='getOneBills'),
-    path("addfavorite", views.addFavoriteBill, name='addFavoriteBill')
+    path("addfavorite", views.addFavoriteBill, name='addFavoriteBill'),
+    path("updatefavoritename", views.updateDavoriteName, name='addFavoriteBill')
 ]
