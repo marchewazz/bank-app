@@ -16,16 +16,20 @@ class BillsService{
         return http.post(`${backendUrl}/bills/getall`, accountData)
     }
 
-    getFavoriteBills(billData: any){
-        return http.post(`${backendUrl}/bills/getfavorite`, billData)
-    }
-
     getOneBill(billData: any){
         return http.post(`${backendUrl}/bills/getonebill`, billData)
     }
 
+    getFavoriteBills(billData: any){
+        return http.post(`${backendUrl}/bills/getfavorite`, billData)
+    }
+
     addFavoriteBill(billData: any){
         return http.post(`${backendUrl}/bills/addfavorite`, billData)
+    }
+
+    editFavoriteBillName(billData: any){
+        return http.post(`${backendUrl}/bills/updatefavoritename`, billData)
     }
 }
 

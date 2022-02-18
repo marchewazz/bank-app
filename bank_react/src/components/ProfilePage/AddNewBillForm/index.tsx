@@ -9,6 +9,8 @@ function AddNewBillForm(props: any){
     var bs: BillsService = new BillsService();
     var as: AuthService = new AuthService();
 
+    const [existingBill, setExistingBill]: any = useState({});
+
     const [info, setInfo] = useState("");
     const [showEditBillQuestion, setShowEditBillQuestion] = useState(false);
 
@@ -38,6 +40,7 @@ function AddNewBillForm(props: any){
                 bs.addFavoriteBill({accountNumber: JSON.parse(JSON.parse(as.getUserDetails())).accountNumber, billName: data.get("billName"), billNumber: data.get("billNumber")}).then((res: any) => {
                     if (res.data.message === "already exists"){
                         setInfo("You have bill with this number in your favorites, do you want to update its name?");
+                        setExistingBill({billName: data.get("billName"), billNumber: data.get("billNumber")});
                         setShowEditBillQuestion(true);
                     } else {
                         setInfo(res.data.message);
@@ -48,6 +51,15 @@ function AddNewBillForm(props: any){
             setInfo("Wrong PIN!")
         }
         
+    }
+
+    async function editFavoriteBillName() {
+        bs.editFavoriteBillName({billName: existingBill.billName, billNumber: existingBill.billNumber, accountNumber: JSON.parse(JSON.parse(as.getUserDetails())).accountNumber}).then((res: any) => {
+            if (res.data.message === "updated") {
+                setInfo("Updated!")
+                setShowEditBillQuestion(false)
+            }
+        })
     }
 
     return (
@@ -93,7 +105,8 @@ function AddNewBillForm(props: any){
                 </span>
                 {showEditBillQuestion ? (
                     <div className="flex justify-evenly self-center">
-                        <button className="btn-style">
+                        <button onClick={editFavoriteBillName} 
+                        className="btn-style">
                             YES
                         </button>
                         <button className="btn-style">
