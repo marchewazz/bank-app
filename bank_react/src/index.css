@@ -6,10 +6,12 @@
     .disabled-styles {
         @apply disabled:border-gray-400 disabled:text-gray-400 disabled:bg-gray-200 
         peer-disabled:border-gray-400 peer-disabled:text-gray-400 peer-disabled:bg-gray-200 
+        disabled:hover:border-gray-400 disabled:hover:text-gray-400 disabled:hover:bg-gray-200 
+        peer-disabled:hover:border-gray-400 peer-disabled:hover:text-gray-400 peer-disabled:hover:bg-gray-200 
         transform transition-all
     }
     .btn-style {
-        @apply bg-red-800 text-white border-2 border-black rounded-lg px-10 py-5
+        @apply disabled-styles bg-red-800 text-white border-2 border-black rounded-lg px-10 py-5
         hover:bg-red-600 hover:text-black
         transform transition-all ease-in
     }

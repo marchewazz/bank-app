@@ -41,11 +41,24 @@ export default function ProfilePage(){
     return (
         <div className="mt-2">
             { !isAuth ? (
-                <fieldset disabled={tries === 0}>
-                    <form onSubmit={validatePIN}>
-                        <input type="password" name="pin" minLength={4} maxLength={4} placeholder="Pass PIN" required />
-                        <button className="btn-style">OK</button>
-                        <p> { info }</p>
+                <fieldset disabled={tries === 0}
+                className="grid place-items-center">
+                    <form onSubmit={validatePIN}
+                    className="grid grid-flow-row gap-y-5">
+                        <input className="input-text-style"
+                        type="password" 
+                        name="pin" 
+                        minLength={4} 
+                        maxLength={4} 
+                        placeholder="Pass PIN" 
+                        required />
+                        <p className="text-center"> 
+                            { info }
+                        </p>
+                        <button className="btn-style">
+                            OK
+                        </button>
+                        
                     </form>
                 </fieldset>
             ) : (
