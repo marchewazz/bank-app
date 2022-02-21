@@ -31,6 +31,11 @@ class BillsService{
     editFavoriteBillName(billData: any){
         return http.post(`${backendUrl}/bills/updatefavoritename`, billData)
     }
+
+    deleteFavoriteBill(billData: any){
+        return http.post(`${backendUrl}/bills/deletefavoritebill`, billData)
+
+    }
 }
 
 export default BillsService;

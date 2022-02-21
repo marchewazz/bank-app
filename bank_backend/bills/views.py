@@ -193,7 +193,7 @@ def getFavoriteBills(request):
         return JsonResponse({"favoriteBills": accountFavoriteBills})
 
 @csrf_exempt
-def updateDavoriteName(request):
+def updateFavoriteName(request):
     billData = json.loads(request.body)
     try:
         client = MongoClient(mongoUrl)
@@ -209,3 +209,19 @@ def updateDavoriteName(request):
         )
         return JsonResponse({"message": "updated"})
 
+@csrf_exempt
+def deleteFavorite(request):
+    billData = json.loads(request.body)
+    try:
+        client = MongoClient(mongoUrl)
+    except ConnectionError:
+        return JsonResponse({"message": "Database problem!"})
+    else:
+        db = client['bank']
+        collection = db['accounts']
+
+        collection.update(
+            {"accountNumber": billData["accountNumber"]},
+            {"$pull": {"favoriteBills":{"billNumber": billData["billNumber"]}}}
+        )
+        return JsonResponse({"message": "delted"})

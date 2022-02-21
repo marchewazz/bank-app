@@ -9,5 +9,6 @@ urlpatterns = [
     path("getfavorite", views.getFavoriteBills, name='getFavoriteBills'),
     path("getonebill", views.getOneBill, name='getOneBills'),
     path("addfavorite", views.addFavoriteBill, name='addFavoriteBill'),
-    path("updatefavoritename", views.updateDavoriteName, name='addFavoriteBill')
+    path("updatefavoritename", views.updateFavoriteName, name='addFavoriteBill'),
+    path("deletefavoritebill", views.deleteFavorite, name='deleteFavoriteBill'),
 ]
