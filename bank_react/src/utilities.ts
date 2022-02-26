@@ -13,9 +13,10 @@ export function useQuery() {
 export function refreshUserData(){
     var as: AuthService = new AuthService();
     if(as.isUserLogged()){
-        as.refreshUserData().then((res: any) => {
-            console.log(JSON.parse(res.data.user));
+        return as.refreshUserData().then((res: any) => {
             as.setUserDetails(res.data.user);
         })
     }
 }
+
+

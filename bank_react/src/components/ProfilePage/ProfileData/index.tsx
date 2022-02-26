@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 
 import AddNewBillForm from "../AddNewBillForm";
@@ -25,6 +25,8 @@ export default function ProfileData(){
     var bs: BillsService = new BillsService();
 
     var navigate = useNavigate();
+
+    const [, forceUpdate] = useReducer(x => x + 1, 0)
 
     function generateData(){
         return <>   
@@ -171,19 +173,32 @@ export default function ProfileData(){
     function deleteOwnBill(billData: any){
         console.log(billData);
         bs.deleteOwnBill(billData).then((res: any) => {
-            console.log(res.data.message);
             setDeleteInfo(res.data.message);
+            if(res.data.message === "Bill deleted!") {
+                refreshUserData()?.then(() => {
+                    setUserBills(JSON.parse(JSON.parse(as.getUserDetails())).bills);
+                    forceUpdate()
+                    setTimeout(() => {
+                        setDeleteInfo("");
+                    }, 5000); 
+                })
+            }
         })
-        setTimeout(() => {
-            setDeleteInfo("");
-        }, 5000);
-        refreshUserData();
-        setUserBills(JSON.parse(JSON.parse(as.getUserDetails())).bills);
     }
 
     function deleteFavoriteBill(billData: any){
         bs.deleteFavoriteBill(billData).then((res: any) => {
             console.log(res);
+            if(res.data.message === "deleted") {
+                refreshUserData()?.then(() => {
+                    setFavoriteUserBills(JSON.parse(JSON.parse(as.getUserDetails())).favoriteBills);  
+                    forceUpdate()
+                });
+                setDeleteInfo("Deleted!") 
+                setTimeout(() => {
+                    setDeleteInfo("")
+                }, 4000);
+            }
         })
     }
 
