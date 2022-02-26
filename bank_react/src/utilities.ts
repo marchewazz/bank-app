@@ -5,6 +5,8 @@ import AuthService from "./services/AuthService";
 
 export var backendUrl = "http://127.0.0.1:8000";
 
+export const bankCurrency = "$";
+
 export function useQuery() {
     const { search } = useLocation();
     return React.useMemo(() => new URLSearchParams(search), [search]);

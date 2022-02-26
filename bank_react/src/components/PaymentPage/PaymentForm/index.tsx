@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useQuery } from "../../../utilities";
+import { useQuery, bankCurrency } from "../../../utilities";
 
 import BillsService from "../../../services/BillsService";
 import AuthService from "../../../services/AuthService";
@@ -309,10 +309,14 @@ function PaymentForm(){
                                         <input className="input-text-style" type="text" name="note" placeholder="Pass note" />
                                     )}
                                     {predefinedAmount !== "" ? (
-                                        <span>Amount: {predefinedAmount}</span>
+                                        <span>Amount: {predefinedAmount + bankCurrency}</span>
                                     ) : (
-                                        <input className="input-text-style" type="text" name="amount" placeholder="Pass amount" pattern={"^[0-9]+(\.[0-9]{1,2})?$"} required />
+                                        <span className="grid grid-flow-col">
+                                            <input className="input-text-style" type="text" name="amount" placeholder="Pass amount" pattern={"^[0-9]+(\.[0-9]{1,2})?$"} required />
+                                            <span className="place-self-center">{bankCurrency}</span>
+                                        </span>
                                     )}
+                                    
                                 </div>
                             </div>
                             <div>

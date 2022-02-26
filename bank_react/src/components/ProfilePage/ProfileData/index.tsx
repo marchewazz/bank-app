@@ -6,7 +6,7 @@ import AddNewBillForm from "../AddNewBillForm";
 import AuthService from "../../../services/AuthService";
 import BillsService from "../../../services/BillsService";
 import TransactionsService from "../../../services/TransactionsService";
-import { refreshUserData } from "../../../utilities";
+import { bankCurrency, refreshUserData } from "../../../utilities";
 
 export default function ProfileData(){
     
@@ -60,7 +60,7 @@ export default function ProfileData(){
                     Note: {transaction.note}
                 </p>
                 <p>
-                    Amount: {transaction.amount}
+                    Amount: {transaction.amount + bankCurrency}
                 </p>
             </div>)
         }
@@ -81,7 +81,7 @@ export default function ProfileData(){
             bills.push(<div>
                 <p>Number: {bill.billNumber}</p>
                 <p>Name: {bill.billName}</p>
-                <p>Balance: {bill.billBalance}</p>
+                <p>Balance: {bill.billBalance + bankCurrency}</p>
                 <div className="grid grid-flow-col place-items-center">
                     <button className="btn-style">
                         <svg xmlns="http://www.w3.org/2000/svg" 
