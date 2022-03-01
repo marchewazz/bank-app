@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'bills',
     'transactions',
     'accounts',
+    'news',
 ]
 
 MIDDLEWARE = [

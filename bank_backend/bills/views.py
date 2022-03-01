@@ -224,4 +224,4 @@ def deleteFavorite(request):
             {"accountNumber": billData["accountNumber"]},
             {"$pull": {"favoriteBills":{"billNumber": billData["billNumber"]}}}
         )
-        return JsonResponse({"message": "delted"})
+        return JsonResponse({"message": "deleted"})
