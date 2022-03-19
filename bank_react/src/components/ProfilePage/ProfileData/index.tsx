@@ -10,7 +10,7 @@ import { bankCurrency, refreshUserData } from "../../../utilities";
 
 export default function ProfileData(){
     
-    const [tab, setTab]: any = useState("Data");
+    const [tab, setTab]: any = useState("Bills");
     const [billsTab, setBillsTab]: any = useState("Own");
     const [userData, setUserData]: any = useState("");
     const [accountHistory, setAccountHistory]: any = useState([]);
@@ -34,11 +34,15 @@ export default function ProfileData(){
                         Your data!
                     </p>
                     <p>
+                        Name and surname: {userData.accountUser.firstName} {userData.accountUser.lastName}
+                    </p>
+                    <p>
                         Email: {userData.accountEmail}
                     </p>
                     <p>
                         Number: {userData.accountNumber}
                     </p>
+                  
                 </>
     }
 
@@ -265,9 +269,12 @@ export default function ProfileData(){
                 </span>
             </div>
             { tab === "Data" ? (
-                <div className="profile-data-tab-style">
-                    {generateData()}
-                </div>
+                userData !== "" ? (
+                    <div className="profile-data-tab-style">
+                        {generateData()}
+                    </div>
+                ) : (null)
+                
             ) : tab === "History" ? (
                 <div>
                     <div className="profile-data-tab-style">
