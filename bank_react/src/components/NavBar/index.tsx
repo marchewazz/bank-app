@@ -22,9 +22,10 @@ export default function NavBar(){
     return (
         <div className="w-screen h-12 grid grid-rows-1 grid-flow-col justify-items-stretch bg-red-800 text-white
         divide-x-8 divide-white">
-            <span className="grid place-items-center text-lg">
+            <Link to="/"
+            className="grid place-items-center text-lg">
                 Amazing Bank
-            </span>
+            </Link>
             <Link to="/"
             className="navbar-link">
                 Home
