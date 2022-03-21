@@ -212,6 +212,7 @@ def updateFavoriteName(request):
 @csrf_exempt
 def deleteFavorite(request):
     billData = json.loads(request.body)
+    print(billData)
     try:
         client = MongoClient(mongoUrl)
     except ConnectionError:

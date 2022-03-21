@@ -55,10 +55,10 @@ def register(request):
                         "billName": "Main bill"
                     }))
                     client.close()
-                    return JsonResponse({"message": "Added!"})
+                    return JsonResponse({"message": "Registered!"})
             else:
                 client.close()
-                return JsonResponse({"message": "We've got already account!"})
+                return JsonResponse({"message": "You've got already account!"})
 
 @csrf_exempt
 def login(request):
