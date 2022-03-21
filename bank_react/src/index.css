@@ -35,4 +35,10 @@
     .profile-data-tab-style {
         @apply grid grid-flow-row place-content-center divide-y-2 divide-gray-400 gap-y-2 border-2 border-gray-400 rounded-lg mx-24 mt-10 p-10
     }
+    .success-info {
+        @apply bg-green-200 border-green-700 text-green-700 rounded-md
+    }
+    .error-info {
+        @apply bg-red-200 border-red-700 text-red-700 rounded-md 
+    }
 }

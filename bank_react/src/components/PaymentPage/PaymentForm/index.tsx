@@ -327,7 +327,7 @@ function PaymentForm(){
                     ) : (
                        null 
                     )}
-                    <p className="text-center">
+                    <p className={"px-10 py-4 text-center " + (info === "" ? "" : "border-2 " + (info === "Transfer done!" ? "success-info" : "error-info"))}>
                         { info }
                     </p>
                 </fieldset>

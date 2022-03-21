@@ -182,11 +182,12 @@ export default function ProfileData(){
                 refreshUserData()?.then(() => {
                     setUserBills(JSON.parse(JSON.parse(as.getUserDetails())).bills);
                     forceUpdate()
-                    setTimeout(() => {
-                        setDeleteInfo("");
-                    }, 5000); 
+                    
                 })
             }
+            setTimeout(() => {
+                setDeleteInfo("");
+            }, 5000); 
         })
     }
 
@@ -198,11 +199,11 @@ export default function ProfileData(){
                     setFavoriteUserBills(JSON.parse(JSON.parse(as.getUserDetails())).favoriteBills);  
                     forceUpdate()
                 });
-                setDeleteInfo("Deleted!") 
-                setTimeout(() => {
-                    setDeleteInfo("")
-                }, 4000);
+                setDeleteInfo("Bill deleted!") 
             }
+            setTimeout(() => {
+                setDeleteInfo("")
+            }, 5000);
         })
     }
 
@@ -326,7 +327,9 @@ export default function ProfileData(){
                     {billsTab === "Own" ? (
                         <>
                             <div>
-                                <p> { deleteInfo }</p>
+                                <p className={(deleteInfo !== "" ? "border-2 " : "") + (deleteInfo === "Bill deleted!" ? "success-info" : "error-info")}> 
+                                    { deleteInfo }
+                                </p>
                                 <div className="profile-data-tab-style">
                                     {generateOwnBills()}
                                 </div>
@@ -336,7 +339,9 @@ export default function ProfileData(){
                     ) : billsTab === "Favorite" ? (
                         <>
                             <div>
-                                <p> { deleteInfo }</p>
+                                <p className={(deleteInfo !== "" ? "border-2 " : "") + (deleteInfo === "Bill deleted!" ? "success-info" : "error-info")}> 
+                                    { deleteInfo }
+                                    </p>
                                 <div className="profile-data-tab-style">
                                     {generateFavoriteBills()}
                                 </div>

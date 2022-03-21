@@ -52,7 +52,7 @@ export default function ProfilePage(){
                         maxLength={4} 
                         placeholder="Pass PIN" 
                         required />
-                        <p className="text-center"> 
+                        <p className={"text-center " + (info !== "" ? "border-2 error-info" : "")}> 
                             { info }
                         </p>
                         <button className="btn-style">

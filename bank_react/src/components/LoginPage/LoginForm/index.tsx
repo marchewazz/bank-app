@@ -57,7 +57,7 @@ export default function LoginForm(){
 
     return (
         <>  
-            <fieldset className="grid auto-rows-auto grid-flow-row border-gray-400 border-2 m-20 p-10 mt-10 rounded-lg"
+            <fieldset className="grid auto-rows-auto grid-flow-row border-gray-400 border-2 p-10 mt-10 rounded-lg"
             disabled={tries === 0}>
                 <fieldset disabled={isLogged}>
                     <form onSubmit={validateUser}
@@ -72,13 +72,15 @@ export default function LoginForm(){
                         name="password" 
                         placeholder="Pass password" 
                         required/>
-                        <button className="btn-style mx-36">
+                        <button className="btn-style mx-36 place-self-center">
                             Login
                         </button>
                     </form>
                 </fieldset>
-                <div className="grid grid-rows-2 justify-items-center">
-                    <p> { info }</p>
+                <div className="grid grid-rows-auto justify-items-center">
+                    <p className={"m-8 px-8 py-4 " + (info !== "" ? "border-2 error-info" : "")}> 
+                        { info }
+                    </p>
                     {isLogged ?(
                         <form onSubmit={validatePIN}
                         className="grid grid-flow-col gap-x-3 items-center">

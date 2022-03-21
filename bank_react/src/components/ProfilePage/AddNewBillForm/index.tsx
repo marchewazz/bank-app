@@ -56,7 +56,7 @@ function AddNewBillForm(props: any){
     async function editFavoriteBillName() {
         bs.editFavoriteBillName({billName: existingBill.billName, billNumber: existingBill.billNumber, accountNumber: JSON.parse(JSON.parse(as.getUserDetails())).accountNumber}).then((res: any) => {
             if (res.data.message === "updated") {
-                setInfo("Updated!")
+                setInfo("Bill updated!")
                 setShowEditBillQuestion(false)
             }
         })
@@ -100,7 +100,7 @@ function AddNewBillForm(props: any){
                 </button>
             </form>
             <div className="grid items-center">
-                <span className="place-self-center"> 
+                <span className={"px-10 py-4 place-self-center "+ (info === "" ? "" : "border-2 " + (info === "Bill created!" || info === "Bill updated!" ||  info === "Bill added!" ? "success-info" : "error-info"))}> 
                     { info }
                 </span>
                 {showEditBillQuestion ? (

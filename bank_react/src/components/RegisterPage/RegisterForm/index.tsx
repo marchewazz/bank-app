@@ -37,13 +37,13 @@ export default function RegisterForm(){
         
             as.registerUser(userData).then((res: any) => {
                 setInfo(res.data.message);
-                if(res.data.message === "Added!") setShowLoginButton(true)
-                if(res.data.message === "We've got already account!") setShowLoginButton(true)
+                if(res.data.message === "Registered!") setShowLoginButton(true)
+                if(res.data.message === "You've got already account!") setShowLoginButton(true)
             })
         }
     }
     return(
-        <div className="border-gray-400 border-2 m-20 p-10 mt-10 rounded-lg">
+        <div className="border-gray-400 border-2 p-10 mt-10 rounded-lg">
             <form onSubmit={registerUser}
             className="grid gap-y-5 auto-rows-auto grid-flow-row mx-24"
             >                    
@@ -88,7 +88,7 @@ export default function RegisterForm(){
                 required 
                 />
                 <div className="grid grid-rows-2 place-items-center">
-                    <span> 
+                    <span className={"m-8 px-8 py-4 " + (info === "" ? "" : "border-2 " + (info === "Registered!" ? "success-info" : "error-info"))}> 
                         { info } 
                     </span>
                     {showLoginButton ? (
